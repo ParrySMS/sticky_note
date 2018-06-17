@@ -44,9 +44,9 @@ $container['database'] = function () {
 $app->get('/login', function ($request, $response) {
     //创建token的post路由
     $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
-    $cct = new stApp\controller\CreateToken($code);
-    setcookie(TOKEN_NAME, $cct->getToken(), EXPIRES, PATH);
-    return $response->withStatus($cct->getStatus());
+    $c_login = new stApp\controller\Login($code);
+    setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);
+    return $response->withStatus($c_login->getStatus());
 });
 
 
