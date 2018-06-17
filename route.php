@@ -40,16 +40,17 @@ $container['database'] = function () {
 
 
 //路由
-//登录 创建token
-//todo token要不要改名login
-$app->post('/token', function ($request, $response) {
+//login登录 创建token
+$app->get('/login', function ($request, $response) {
     //创建token的post路由
-    $account = isset($request->getParsedBody()["account"]) ? $request->getParsedBody()["account"] : null;
-    $pw = isset($request->getParsedBody()["pw"]) ? $request->getParsedBody()["pw"] : null;
-    $cct = new zzxApp\controller\CreateToken($account, $pw, $this->database);
+    $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
+    $cct = new stApp\controller\CreateToken($code);
     setcookie(TOKEN_NAME, $cct->getToken(), EXPIRES, PATH);
     return $response->withStatus($cct->getStatus());
 });
+
+
+
 
 //获取轮播图
 $app->get('/img/sliders', function ($request, $response) {

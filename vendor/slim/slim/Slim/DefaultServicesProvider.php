@@ -25,7 +25,7 @@ use Slim\Interfaces\InvocationStrategyInterface;
 use Slim\Interfaces\RouterInterface;
 
 /**
- * Slim's default Service Provider.
+ * Slim's default service Provider.
  */
 class DefaultServicesProvider
 {

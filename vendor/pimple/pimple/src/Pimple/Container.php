@@ -158,12 +158,12 @@ class Container implements \ArrayAccess
      *
      * @return callable The passed callable
      *
-     * @throws ExpectedInvokableException Service definition has to be a closure or an invokable object
+     * @throws ExpectedInvokableException service definition has to be a closure or an invokable object
      */
     public function factory($callable)
     {
         if (!method_exists($callable, '__invoke')) {
-            throw new ExpectedInvokableException('Service definition is not a Closure or invokable object.');
+            throw new ExpectedInvokableException('service definition is not a Closure or invokable object.');
         }
 
         $this->factories->attach($callable);
@@ -180,7 +180,7 @@ class Container implements \ArrayAccess
      *
      * @return callable The passed callable
      *
-     * @throws ExpectedInvokableException Service definition has to be a closure or an invokable object
+     * @throws ExpectedInvokableException service definition has to be a closure or an invokable object
      */
     public function protect($callable)
     {

@@ -76,7 +76,7 @@ final class StandardTagFactory implements TagFactory
     private $fqsenResolver;
 
     /**
-     * @var mixed[] an array representing a simple Service Locator where we can store parameters and
+     * @var mixed[] an array representing a simple service Locator where we can store parameters and
      *     services that can be inserted into the Factory Methods of Tag Handlers.
      */
     private $serviceLocator = [];
@@ -276,7 +276,7 @@ final class StandardTagFactory implements TagFactory
     }
 
     /**
-     * Returns a copy of this class' Service Locator with added dynamic parameters, such as the tag's name, body and
+     * Returns a copy of this class' service Locator with added dynamic parameters, such as the tag's name, body and
      * Context.
      *
      * @param TypeContext $context The Context (namespace and aliasses) that may be passed and is used to resolve FQSENs.

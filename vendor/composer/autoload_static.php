@@ -19,10 +19,6 @@ class ComposerStaticInitef1eb871add08a79c9c8fece2650a333
         array (
             'Webmozart\\Assert\\' => 17,
         ),
-        'T' => 
-        array (
-            'Tests\\' => 6,
-        ),
         'S' => 
         array (
             'Symfony\\Component\\Yaml\\' => 23,
@@ -38,6 +34,7 @@ class ComposerStaticInitef1eb871add08a79c9c8fece2650a333
         'M' => 
         array (
             'Monolog\\' => 8,
+            'Medoo\\' => 6,
         ),
         'I' => 
         array (
@@ -64,10 +61,6 @@ class ComposerStaticInitef1eb871add08a79c9c8fece2650a333
         'Webmozart\\Assert\\' => 
         array (
             0 => __DIR__ . '/..' . '/webmozart/assert/src',
-        ),
-        'Tests\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/tests',
         ),
         'Symfony\\Component\\Yaml\\' => 
         array (
@@ -96,6 +89,10 @@ class ComposerStaticInitef1eb871add08a79c9c8fece2650a333
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Medoo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/catfan/medoo/src',
         ),
         'Interop\\Container\\' => 
         array (

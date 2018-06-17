@@ -323,7 +323,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider badServiceDefinitionProvider
      * @expectedException \Pimple\Exception\ExpectedInvokableException
-     * @expectedExceptionMessage Service definition is not a Closure or invokable object.
+     * @expectedExceptionMessage service definition is not a Closure or invokable object.
      */
     public function testFactoryFailsForInvalidServiceDefinitions($service)
     {
@@ -335,7 +335,7 @@ class PimpleTest extends \PHPUnit_Framework_TestCase
      * @group legacy
      * @dataProvider badServiceDefinitionProvider
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Service definition is not a Closure or invokable object.
+     * @expectedExceptionMessage service definition is not a Closure or invokable object.
      */
     public function testLegacyFactoryFailsForInvalidServiceDefinitions($service)
     {

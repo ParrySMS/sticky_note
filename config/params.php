@@ -8,7 +8,10 @@
  */
 
 //token 加密密钥
-define('DATA_AUTH_KEY','NG#snl*&28&%^gf&8grugt574^vf98');
+define('DATA_AUTH_KEY','fndoy839yfFS%^gf&8grugt574^vf98');
+
+//
+define('TOKEN_NAME','st_token');
 
 //cookie 路径
 define('PATH','/');
