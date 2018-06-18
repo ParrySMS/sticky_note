@@ -8,6 +8,9 @@
  */
 namespace stApp\controller;
 use Exception;
+use stApp\service\WxRequest;
+use stApp\service\CreateToken;
+
 class Login extends BaseController
 {
     private $token;
@@ -36,7 +39,22 @@ class Login extends BaseController
     }
 
     public function wx_login($code){
-        //todo 参数检查 获取openid 获取用户信息 生成token
+        //获取openid 获取用户信息
+        $wx = new WxRequest();
+        $acc = $wx->getAccessToken($code);
+        $info = $wx->getUserinfo($acc->access_token,$acc->openid);
+
+        //todo 创建用户 生成token
+        $scCT = new CreateToken($info);
+
+
+        $json = $scLg->getJson();
+        if (!is_null($json)) {
+            print_r(json_encode($json));
+        }
+
+
+
     }
 
 

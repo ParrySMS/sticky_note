@@ -20,29 +20,13 @@ $config = [
 ];
 
 $app = new \Slim\App($config);
+//自动遍历参数集
+$pm_check = new \stApp\common\PmCheck();
 
-//数据库容器
-$container = $app->getContainer();
-$container['database'] = function () {
-    return new Medoo([
-        'database_type' => DATABASE_TYPE,
-        'database_name' => DATABASE_NAME,
-        'server' => SERVER,
-        'username' => USERNAME,
-        'password' => PASSWORD,
-        'charset' => CHARSET,
-        'port' => PORT,
-        'check_interval' => CHECK_INTERVAL
-    ]);
-};
+//路由组
 
-//todo: 预留 调用common进行api记录监控
-
-
-//路由
 //login登录 创建token
-$app->get('/login', function ($request, $response) {
-    //创建token的post路由
+$app->post('/login', function ($request, $response) {
     $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
     $c_login = new stApp\controller\Login($code);
     setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);
