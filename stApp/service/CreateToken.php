@@ -14,7 +14,9 @@ use stApp\common\Http;
 use stApp\common\ThinkCrypt;
 use stApp\dao\User;
 use Exception;
-class CreateToken
+use stApp\model\Json;
+
+class CreateToken extends BaseService
 {
     private $user;
     private $crypt;
@@ -29,31 +31,35 @@ class CreateToken
     }
 
 
+    /** 判断参数情况与新老用户，返回token与登录提示
+     * @param $openid
+     * @param null $info
+     * @return int|string
+     * @throws Exception
+     */
     public function createToken($openid,$info = null ){
 
         if(empty($info)) {//默认老用户
             $userdata = $this->user->getUser($openid);
-            $id = $userdata['id'];
+            $uid = $userdata['id'];
             $visible = $userdata['visible'];
 
-            if ($id == 0) { //新用户 需要更多用户信息
+            if ($uid == 0) { //新用户 需要更多用户信息
                 return 0;
             }
 
             if($visible == 0){//黑名单用户
-                throw new Exception(MSG_BLACK_USER,200);
+                throw new Exception(MSG_BLACK_USER,20040301);
             }
-
             //正常老用户
-            $token = $this->getToken()
-
+            $token = $this->getToken($uid,$openid);
         }else{//新用户
-            $id = $this->getNewUserid($info);
+            $uid = $this->getNewUserid($info);
+            $token = $this->getToken($uid,$openid);
         }
-
-
+        $this->json = new Json('登录成功');
+        return $token;
     }
-
 
     // 首次进入 创建用户
     public function getNewUserid($info){

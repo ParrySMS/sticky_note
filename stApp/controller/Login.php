@@ -37,12 +37,13 @@ class Login extends BaseController
 
 
         } catch (Exception $e) {
-            $this->setStatus($e->getCode());
-            if ($e->getCode() != 200) {//非200 直接输出
+            if ($e->getCode() <= 505) {//非200 直接输出
+                $this->setStatus($e->getCode());
                 echo MSG_ERROR_INFO . $e->getMessage();
-            } else {
-                //200下报错用json处理
-                $json = new Json($e->getMessage());
+
+            } else { //200下状态码 报错用json处理
+                $this->setStatus(200);
+                $json = new Json($e->getMessage(),null,$e->getCode());
                 if (!is_null($json)) {
                     print_r(json_encode($json));
                 }
@@ -50,6 +51,10 @@ class Login extends BaseController
         }
     }
 
+    /** 微信登录 生成token
+     * @param $code
+     * @throws Exception
+     */
     public function wx_login($code)
     {
         //获取openid 获取用户信息
@@ -65,17 +70,15 @@ class Login extends BaseController
             $token = $scCT->createToken($acc->openid, $info);
         }
 
-
-
-
-        $json = $scLg->getJson();
+        if(empty($token)){
+            throw new Exception(__FUNCTION__.' error: token empty',500);
+        }
+        //token创建成功
+        $json = $scCT->getJson();
         if (!is_null($json)) {
             print_r(json_encode($json));
         }
-
-
     }
-
 
     public function qq_login()
     {

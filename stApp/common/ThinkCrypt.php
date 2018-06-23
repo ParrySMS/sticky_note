@@ -92,7 +92,7 @@ class ThinkCrypt implements Crypt
      *  $str = $str.(补充的NONSTR)
      */
     public function tokenDecrypt($token)
-        //todo:下面要修改
+        //todo:下面要修改具体的解密
     {
         if ($token == null) {
             throw new Exception("TOKEN_ERROR: invalid token1", 403);
