@@ -116,5 +116,4 @@ class ThinkCrypt implements Crypt
         }
     }
 
-
 }

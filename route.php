@@ -23,7 +23,7 @@ $app = new \Slim\App($config);
 //自动遍历参数集
 $pm_check = new \stApp\common\PmCheck();
 
-//路由组
+//路由区域
 
 //login登录 创建token
 $app->post('/login', function ($request, $response) {
@@ -32,6 +32,31 @@ $app->post('/login', function ($request, $response) {
     setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);
     return $response->withStatus($c_login->getStatus());
 });
+
+//处理笔记内容
+$app->group('/note',function ($request, $response) {
+
+    //检查token
+    if (!$request->hasHeader('cookie') || !isset($_COOKIE[TOKEN_NAME])) {
+        return $response->withStatus(412)->write('Precondition Failed');
+    }
+    $token = $_COOKIE[TOKEN_NAME];
+
+
+    $this->post('', function ($request, $response,$token) {
+        //接收数据
+        $note = isset($request->getParsedBody()["note"]) ? $request->getParsedBody()["note"] : null;
+        $c_note = //todo 实现插入的控制器
+
+        //todo 鉴权 插入
+        
+
+    });
+
+
+});
+
+
 
 
 $app->run();

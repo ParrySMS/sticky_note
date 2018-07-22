@@ -26,7 +26,7 @@ class Login extends BaseController
         return $this->token;
     }
 
-    /**
+    /** 应该是用构造方法控制登录模式
      * Login constructor.
      */
     public function __construct($code)
