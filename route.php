@@ -49,7 +49,7 @@ $app->group('/note',function ($request, $response) {
         $c_note = //todo 实现插入的控制器
 
         //todo 鉴权 插入
-        
+
 
     });
 
