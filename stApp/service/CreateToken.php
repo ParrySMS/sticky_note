@@ -34,7 +34,7 @@ class CreateToken extends BaseService
     /** 判断参数情况与新老用户，返回token与登录提示
      * @param $openid
      * @param null $info
-     * @return int|string
+     * @return int|string 返回0表示新用户 返回token说明老用户成功
      * @throws Exception
      */
     public function createToken($openid,$info = null ){
@@ -54,15 +54,16 @@ class CreateToken extends BaseService
             //正常老用户
             $token = $this->getToken($uid,$openid);
         }else{//新用户
-            $uid = $this->getNewUserid($info);
+            $uid = $this->user->insertUser($info);
             $token = $this->getToken($uid,$openid);
         }
+
         $this->json = new Json('登录成功');
         return $token;
     }
 
-    // 首次进入 创建用户
-    public function getNewUserid($info){
+    // 该方法弃用  首次进入 创建用户 改为不拆分
+    private function getNewUserid($info){
         /**   正常返回
         openid	用户的唯一标识
         nickname	用户昵称
@@ -74,7 +75,7 @@ class CreateToken extends BaseService
         privilege	用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
         unionid	只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
          */
-        //为了dao层更大的复用性，此处拆分
+
         $openid = $info->openid;
         $nickname = $info->nickname;
         $sex = $info->sex;
@@ -84,7 +85,8 @@ class CreateToken extends BaseService
         $headimgurl = $info->headimgurl;
         $privilege = $info->privilege;
         $unionid = $info->unionid;
-        return $this->user->insertUser($openid,$nickname,$sex,$province,$city,$country,$headimgurl,$privilege,$unionid);
+       return $this->user->insertUser_multiPm($openid,$nickname,$sex,$province,$city,$country,$headimgurl,$privilege,$unionid);
+
     }
 
 
@@ -93,10 +95,8 @@ class CreateToken extends BaseService
      * @param $openid
      * @return string
      */
-    public function getToken($uid,$openid){
-        $http = new Http();
-        $ip = $http->getIP();
-        $tokenStr =   $uid . "+" . md5($openid) . "+" . $ip . "+" . date("M-d H:i:s");
+    private function getToken($uid,$openid){
+        $tokenStr = $this->crypt->getTokenStr($uid,$openid);
         $token = $this->crypt->thinkEncrypt($tokenStr);
         return $token;
     }

@@ -15,28 +15,31 @@ class PmCheck
 {
 
 
-    public function __construct()
+    public function __construct($is_encode = false)
     {
-        //默认检查
+
+
+        if ($is_encode == false) {
+            //默认检查
             $_GET = $this->arrayCheck($_GET);
-        $_POST = $this->arrayCheck($_POST);
-        //部分前端加密数据
-        $get_body = $this->pmDecode($_GET);
-        $post_body = $this->pmDecode($_POST);
-        $_GET = $this->arrayCheck($get_body);
-        $_POST = $this->arrayCheck($post_body);
+            $_POST = $this->arrayCheck($_POST);
+        } else {
+            //部分前端加密数据
+            $get_body = $this->pmDecode($_GET);
+            $post_body = $this->pmDecode($_POST);
+            $_GET = $this->arrayCheck($get_body);
+            $_POST = $this->arrayCheck($post_body);
+        }
 //            $_COOKIE = $this->array_check($_COOKIE);
 //            $_FILES = $this->array_check($_FILES);
     }
-
-
 
 
     /** 字符串过滤函数
      * @param $str
      * @return mixed|string
      */
-    private function strCheck($str)
+    protected function strCheck($str)
     {
         $str = trim($str);
         $str = strip_tags($str);
@@ -55,25 +58,27 @@ class PmCheck
     }
 
 
-    /** 数字检查函数
-     * @param $num
-     * @param bool $intval 是否转为int
-     * @return int|null
+    /** 把字符串转化为对应的数字值
+     * @param $val
+     * @param bool $intval
+     * @return int|null|string
      */
-    private function numCheck($num, $intval = false)
+    protected function getNumeric($val, $intval = false)
     {
-        if (!is_numeric($num)) {
+        if (!is_numeric($val)) {
             return null;
         }
 
         if ($intval == true) {
-            $num = intval($num);
+            $val = intval($val);
         }
-        return $num;
+
+        return $val + 0;
     }
 
+
 // 数组遍历过滤函数
-    private function arrayCheck(&$array)
+    protected function arrayCheck(&$array)
     {
         //如果是数组，遍历数组，递归调用
         if (is_array($array)) {
@@ -94,7 +99,7 @@ class PmCheck
      * @param $sql_str
      * @return bool
      */
-   private function hasInject($sql_str)
+    protected function hasInject($sql_str)
     {
         $num = preg_match('/select|insert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|UNION|into|load_file|outfile/', $sql_str);
         return ($num == 0) ? false : true;
@@ -104,7 +109,7 @@ class PmCheck
      * @param $array
      * @return array|string
      */
-   private function stripslashesArray(&$array)
+    protected function stripslashesArray(&$array)
     {
         if (is_array($array)) {
             foreach ($array as $k => $v) {
@@ -116,15 +121,20 @@ class PmCheck
         return $array;
     }
 
-    public function pmDecode($params){
-       if(is_array($params)){
-           foreach ($params as $key => $p){
-               $params[$key] = base64_decode(base64_decode($p));
-           }
-       }else{
-           $params = base64_decode(base64_decode($params));
-       }
-       return $params;
+    /** 前端传输的弱解密
+     * @param $params
+     * @return array|bool|string
+     */
+    public function pmDecode($params)
+    {
+        if (is_array($params)) {
+            foreach ($params as $key => $p) {
+                $params[$key] = base64_decode(base64_decode($p));
+            }
+        } else {
+            $params = base64_decode(base64_decode($params));
+        }
+        return $params;
     }
 
 

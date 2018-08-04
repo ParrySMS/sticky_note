@@ -12,13 +12,13 @@ namespace stApp\service;
 abstract class BaseService
 {
     /**
-     * @var \zzxApp\model\Json $json 功能实现后的封装好的json
+     * @var \stApp\model\Json $json 功能实现后的封装好的json
      */
     protected $json;
 
 
     /** getter方法 实现某一个功能，返回数据封装到retdata对象里，返回json
-     * @return \zzxApp\model\Json
+     * @return \stApp\model\Json
      */
     public function getJson(){
         return $this->json;

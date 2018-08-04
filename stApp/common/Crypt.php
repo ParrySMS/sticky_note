@@ -7,7 +7,6 @@
  */
 
 
-
 namespace stApp\common;
 
 /** 若安全性要求增加 可以更换更复杂的加密算法
@@ -16,11 +15,12 @@ namespace stApp\common;
  */
 interface Crypt
 {
-    function thinkEncrypt($data, $key, $expire);
+    public function thinkEncrypt($data, $key, $expire);
+
     /*
      * 加密
      */
-    function thinkDecrypt($token, $database);
+     public function thinkDecrypt($token, $database);
     /*
      * 解密
      */

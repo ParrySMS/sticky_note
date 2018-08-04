@@ -36,11 +36,6 @@ $app->post('/login', function ($request, $response) {
 //处理笔记内容
 $app->group('/note',function ($request, $response) {
 
-    //检查token
-    if (!$request->hasHeader('cookie') || !isset($_COOKIE[TOKEN_NAME])) {
-        return $response->withStatus(412)->write('Precondition Failed');
-    }
-    $token = $_COOKIE[TOKEN_NAME];
 
 
     $this->post('', function ($request, $response,$token) {

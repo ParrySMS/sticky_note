@@ -8,6 +8,7 @@
  */
 
 namespace stApp\dao;
+
 use Exception;
 
 class User extends BaseDao
@@ -27,23 +28,24 @@ class User extends BaseDao
         ], [
             'AND' => [
                 'openid' => $openid,
-               // 'visible' => 1
+                // 'visible[!]' => 0
             ]
         ]);
 
-        if(!is_array($data)){
-            throw new Exception(__FUNCTION__.' error',500);
+        if (!is_array($data)) {
+            throw new Exception(__CLASS__ . __FUNCTION__ . ' error', 500);
         }
 
         //空数组 查不到
-        if(sizeof($data)==0){
+        if (sizeof($data) == 0) {
             return 0;
         }
 
         return $data;
     }
 
-    /** 插入新用户并返回id
+    /** 该方法弃用 插入新用户并返回id 输入多参数
+     * 参见 insertUser 方法
      * @param $openid
      * @param $nickname
      * @param $sex
@@ -56,26 +58,93 @@ class User extends BaseDao
      * @return int|string
      * @throws Exception
      */
-    public function insertUser( $openid,$nickname,$sex,$province,$city,$country,$headimgurl,$privilege,$unionid){
-        $pdo = $this->database->insert($this->table,[
-            'openid'=>$openid,
-            'nickname'=>$nickname,
-            'sex'=>$sex,
-            'province'=>$province,
-            'city'=>$city,
-            'country'=>$country,
-            'headimgurl'=>$headimgurl,
-            'privilege'=>$privilege,
-            'unionid'=>$unionid,
+//    public function insertUser_multiPm($openid, $nickname, $sex, $province, $city, $country, $headimgurl, $privilege, $unionid)
+//    {
+//        $pdo = $this->database->insert($this->table, [
+//            'openid' => $openid,
+//            'nickname' => $nickname,
+//            'sex' => $sex,
+//            'province' => $province,
+//            'city' => $city,
+//            'country' => $country,
+//            'headimgurl' => $headimgurl,
+//            'privilege' => $privilege,
+//            'unionid' => $unionid,
+//        ]);
+//        $row = $pdo->rowCount();
+//        if ($row != 1) {//插入1条失败
+//            throw new Exception(__CLASS__ . __FUNCTION__ . ' error', 500);
+//        }
+//
+//        return $this->database->id();
+//
+//    }
+
+
+    /** 插入新用户并返回id 输入唯一参数信息包
+     * @param $info
+     * @return int|mixed|string
+     * @throws Exception
+     */
+    public function insertUser($info)
+    {
+        $pdo = $this->database->insert($this->table, [
+            'openid' => $info->openid,
+            'nickname' => $info->nickname,
+            'sex' => $info->sex,
+            'province' => $info->province,
+            'city' => $info->city,
+            'country' => $info->country,
+            'headimgurl' => $info->headimgurl,
+            'privilege' => $info->privilege,
+            'unionid' => $info->unionid,
         ]);
         $row = $pdo->rowCount();
-        if($row!=1){//插入1条失败
-            throw new Exception(__FUNCTION__.' error',500);
+        if ($row != 1) {//插入1条失败
+            throw new Exception( __CLASS__ . __FUNCTION__ . ' error', 500);
         }
 
         return $this->database->id();
-
     }
+
+    /** 判断用户是否存在
+     * @param $uid
+     * @return bool
+     */
+    public function hasUser($uid)
+    {
+            $has = $this->database->has($this->table,[
+                'AND'=>[
+                    'id'=>$uid,
+                    'visible[!]'=>0
+                ]
+            ]);
+
+            return $has;
+    }
+
+    /** 获取用户opendid
+     * @param $uid
+     * @throws Exception
+     */
+    public function getOpenid($uid)
+    {
+        $data = $this->database->select($this->table,[
+            'openid'
+        ],[
+            'AND'=>[
+                'id'=>$uid,
+                'visible[!]'=>0
+            ]
+        ]);
+
+        if(!is_array($data)||sizeof($data)==0){
+            throw new Exception(__CLASS__.__FUNCTION__.' error',500);
+        }
+    }
+
+
+
 
 
 }

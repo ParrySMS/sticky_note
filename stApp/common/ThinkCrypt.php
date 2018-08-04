@@ -88,18 +88,17 @@ class ThinkCrypt implements Crypt
      * @param $token
      * @return array|null
      * 加密内容如下
-     *   $str = $user_id . "+" . md5($openid) . "+" . $ip . "+" . date("M-d H:i:s") ;
+     *   $tokenStr =   $uid . "+" . md5($openid) . "+" . $ip . "+" . date("M-d H:i:s");
      *  $str = $str.(补充的NONSTR)
      */
     public function tokenDecrypt($token)
-        //todo:下面要修改具体的解密
     {
         if ($token == null) {
             throw new Exception("TOKEN_ERROR: invalid token1", 403);
         } else {
             $str = $this->thinkDecrypt($token);
-            $user_id = strtok($str, "+");
-            $md5Account = strtok("+");
+            $uid = strtok($str, "+");
+            $md5_openid = strtok("+");
             $ip = strtok("+");
             $date = strtok("+");
             $nonstr = strtok("+");
@@ -107,13 +106,21 @@ class ThinkCrypt implements Crypt
                 throw new Exception("TOKEN_ERROR: invalid token2", 403);
             } else {
                 unset($tokenAr);
-                $tokenAr = compact('user_id', 'md5Account', 'ip', 'date', 'nonstr');
+                $tokenAr = compact('uid', 'md5_openid', 'ip', 'date', 'nonstr');
                 if (!is_array($tokenAr)) {
                     throw new Exception("COMMON_ERROR: tokenDecrypt", 500);
                 }
                 return $tokenAr;
             }
         }
+    }
+
+    public function getTokenStr($uid,$openid)
+    {
+        $http = new Http();
+        $ip = $http->getIP();
+        return $tokenStr =   $uid . "+" . md5($openid) . "+" . $ip . "+" . date("M-d H:i:s");
+
     }
 
 }

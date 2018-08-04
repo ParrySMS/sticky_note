@@ -7,7 +7,8 @@
  */
 
 namespace stApp\controller;
-
+use \Exception;
+use stApp\model\Json;
 
 class BaseController
 {
@@ -32,6 +33,24 @@ class BaseController
         $this->status = $status;
     }
 
+    public function error(Exception $e){
+        if ($e->getCode() <= 505) {//非200 直接输出
+            $this->setStatus($e->getCode());
+            echo MSG_ERROR_INFO . $e->getMessage();
+
+        } else { //200下状态码 报错用json处理
+            $this->setStatus(200);
+            $json = new Json($e->getMessage(), null, $e->getCode());
+            $this->echoJson($json);
+        }
+    }
+
+    public function echoJson(Json $json)
+    {
+        if (!is_null($json)) {
+            print_r(json_encode($json));
+        }
+    }
 
 
     /**
