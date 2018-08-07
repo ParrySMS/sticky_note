@@ -43,7 +43,6 @@ $app->group('/note',function ($request, $response) {
         $note = isset($request->getParsedBody()["note"]) ? $request->getParsedBody()["note"] : null;
         $c_note = //todo 实现插入的控制器
 
-        //todo 鉴权 插入
 
 
     });

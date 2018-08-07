@@ -60,7 +60,7 @@ class Login extends BaseController
         }
 
         if (empty($token)) {
-            throw new Exception(__FUNCTION__ . ' error: token empty', 500);
+            throw new Exception(__CLASS__.__FUNCTION__ . ' error: token empty', 500);
         }
         //token创建成功
         $this->echoJson($scCT->getJson());

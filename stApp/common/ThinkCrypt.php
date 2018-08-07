@@ -108,7 +108,7 @@ class ThinkCrypt implements Crypt
                 unset($tokenAr);
                 $tokenAr = compact('uid', 'md5_openid', 'ip', 'date', 'nonstr');
                 if (!is_array($tokenAr)) {
-                    throw new Exception("COMMON_ERROR: tokenDecrypt", 500);
+                    throw new Exception(__CLASS__.__FUNCTION__.' error', 500);
                 }
                 return $tokenAr;
             }

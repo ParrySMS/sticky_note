@@ -14,11 +14,12 @@ use Exception;
 class PmCheck
 {
 
-
+    /** 进行了参数的防注入异常检查
+     * PmCheck constructor.
+     * @param bool $is_encode
+     */
     public function __construct($is_encode = false)
     {
-
-
         if ($is_encode == false) {
             //默认检查
             $_GET = $this->arrayCheck($_GET);
@@ -45,12 +46,14 @@ class PmCheck
         $str = strip_tags($str);
         //使用addslashes函数 添加反斜杠来处理
         $str = addslashes($str);
-        $str = preg_replace("/\r\n/", " ", $str);
+        //允许回车
+//        $str = preg_replace('/\r\n/', ' ', $str);
         //过滤成全角
-        $str = str_replace("<", '〈', $str);
-        $str = str_replace(">", '〉', $str);
-        $str = str_replace("_", "＿", $str);
-        $str = str_replace("%", '％', $str);
+        $str = str_replace('<', '〈', $str);
+        $str = str_replace('>', '〉', $str);
+        $str = str_replace('_', '＿', $str);
+        $str = str_replace('%', '％', $str);
+        $str = str_replace('&', '\'&', $str);
         //html标签处理
         $str = htmlspecialchars($str);
 //        var_dump($str);
