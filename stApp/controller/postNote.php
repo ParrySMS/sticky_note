@@ -16,14 +16,14 @@ class postNote extends BaseController
     /**
      * postNote constructor.
      */
-    public function __construct($note)
+    public function __construct($note_text)
     {
         try {
             $check = new LogicCheck();
             $uid = $check->token_info['uid'];
 
-            $note = $check->note($note);
-            $this->post($uid,$note);
+            $note_text = $check->note($note_text);
+            $this->post($uid,$note_text);
 
         }catch (Exception $e){
             $this->error($e);

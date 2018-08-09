@@ -28,23 +28,30 @@ $pm_check = new \stApp\common\PmCheck();
 //login登录 创建token
 $app->post('/login', function ($request, $response) {
     $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
-    $c_login = new stApp\controller\Login($code);
+    $c_login = new \stApp\controller\Login($code);
     setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);
     return $response->withStatus($c_login->getStatus());
 });
 
 //处理笔记内容
-$app->group('/note',function ($request, $response) {
+$app->group('/note',function () {
 
-
-    $this->post('', function ($request, $response,$token) {
-        //接收数据
-        $note = isset($request->getParsedBody()["note"]) ? $request->getParsedBody()["note"] : null;
-        $c_note = new \stApp\controller\postNote($note);
+    //插入新数据
+    $this->post('', function ($request, $response) {
+        $note_text = isset($request->getParsedBody()['note_text']) ? $request->getParsedBody()["note_text"] : null;
+        $c_note = new \stApp\controller\postNote($note_text);
         return $response->withStatus($c_note->getStatus());
     });
 
+    $this->post('/finished/{nid}', function ($request, $response,array $args) {
+        $nid = isset($args['nid'])?$args['nid']:null;
+//        $c_status = new
 
+    });
+    $this->post('/unfinished/{nid}', function ($request, $response,array $args) {
+        $nid = isset($args['nid'])?$args['nid']:null;
+
+    });
 });
 
 
