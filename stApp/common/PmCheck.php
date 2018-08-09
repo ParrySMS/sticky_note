@@ -36,6 +36,23 @@ class PmCheck
     }
 
 
+    /** 前端传输的弱解密
+     * @param $params
+     * @return array|bool|string
+     */
+    public function pmDecode($params)
+    {
+        if (is_array($params)) {
+            foreach ($params as $key => $p) {
+                $params[$key] = base64_decode(base64_decode($p));
+            }
+        } else {
+            $params = base64_decode(base64_decode($params));
+        }
+        return $params;
+    }
+
+
     /** 字符串过滤函数
      * @param $str
      * @return mixed|string
@@ -124,21 +141,56 @@ class PmCheck
         return $array;
     }
 
-    /** 前端传输的弱解密
-     * @param $params
-     * @return array|bool|string
+    /** 长度检查
+     * @param $str
+     * @param $min
+     * @param $max
+     * @return array|string
+     * @throws Exception
      */
-    public function pmDecode($params)
+    protected function lenCheck($str, $min = 0, $max = 1000)
     {
-        if (is_array($params)) {
-            foreach ($params as $key => $p) {
-                $params[$key] = base64_decode(base64_decode($p));
-            }
-        } else {
-            $params = base64_decode(base64_decode($params));
+        if (mb_strlen($str) < $min) {
+            throw new Exception("STRLEN_ERROR: min $min byte, $str", 400);
+            //die ("min: $min byte");
+        } else if (mb_strlen($str) > $max) {
+            throw new Exception("STRLEN_ERROR: max $max byte, $str", 400);
+            //die ("max: $max byte");
         }
-        return $params;
+        return $this->stripslashesArray($str);
     }
+
+    /** 检查是否为手机号
+     * @param $phone
+     * @return mixed
+     * @throws Exception
+     */
+    protected function phoneCheck($phone)
+    {
+        if (!preg_match("/^1[34578]\d{9}$/", $phone)) {
+            throw new Exception("PARAM_ERROR: invalid phone number,$phone", 400);
+        }
+        return $phone;
+    }
+
+    /** 是否微信号
+     * @param $wx
+     * @param int $wx_min
+     * @param int $wx_max
+     * @return mixed
+     * @throws Exception
+     */
+    protected function wxCheck($wx, $wx_min = 6, $wx_max = 20)
+    {
+        if (!preg_match('/^[0-9a-zA-Z_-]{' . $wx_min . ',' . $wx_max . '}$/i', $wx)) {
+            throw new Exception("PARAM_ERROR: WX not allowed", 400);
+        }
+
+        return $wx;
+    }
+
+
+
 
 
 }

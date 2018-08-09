@@ -37,14 +37,11 @@ $app->post('/login', function ($request, $response) {
 $app->group('/note',function ($request, $response) {
 
 
-
     $this->post('', function ($request, $response,$token) {
         //接收数据
         $note = isset($request->getParsedBody()["note"]) ? $request->getParsedBody()["note"] : null;
-        $c_note = //todo 实现插入的控制器
-
-
-
+        $c_note = new \stApp\controller\postNote($note);
+        return $response->withStatus($c_note->getStatus());
     });
 
 

@@ -9,24 +9,30 @@
 namespace stApp\controller;
 use \Exception;
 use stApp\common\LogicCheck;
+use stApp\service\Note;
 
 class postNote extends BaseController
 {
-    private $check;
-
     /**
      * postNote constructor.
      */
-    public function __construct()
+    public function __construct($note)
     {
         try {
-            $this->check = new LogicCheck();
-            $token_info = $this->check->token_info;
-            
+            $check = new LogicCheck();
+            $uid = $check->token_info['uid'];
 
+            $note = $check->note($note);
+            $this->post($uid,$note);
 
         }catch (Exception $e){
             $this->error($e);
         }
     }
+
+    private function post($uid,$note_text){
+        $note = new Note();
+        $this->echoJson($note->post($uid,$note_text));
+    }
+
 }

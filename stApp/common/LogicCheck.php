@@ -14,6 +14,7 @@ use stApp\dao\User;
 class LogicCheck extends PmCheck
 {
     public $token_info = [];
+    //tokenAr = compact('uid', 'md5_openid', 'ip', 'date', 'nonstr');
 
 
     /** 默认开启token检查 并且存储token_info
@@ -35,6 +36,11 @@ class LogicCheck extends PmCheck
     }
 
 
+    /** 解密之后逻辑匹配检查
+     * @param $token
+     * @return array|null
+     * @throws Exception
+     */
     public function getTokenInfo($token)
     {
 
@@ -58,12 +64,21 @@ class LogicCheck extends PmCheck
 
     }
 
-    public function postNote($note)
+    /** note数据检查
+     * @param $note
+     * @return array|string
+     * @throws Exception
+     *
+     */
+    public function note($note)
     {
-        //可能会有数字0 故不用empty
+        //空检查 可能会有数字0 故不用empty
         if(is_null($note)||$note === ''){
             throw new Exception('note null',400);
         }
+        //长度检查
+        return $this->lenCheck($note);
+
     }
 
 

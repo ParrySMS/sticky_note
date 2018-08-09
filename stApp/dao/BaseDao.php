@@ -8,6 +8,7 @@
  */
 namespace stApp\dao;
 use Medoo\Medoo;
+date_default_timezone_set("Asia/Shanghai");
 
 class BaseDao
 {
@@ -28,6 +29,7 @@ class BaseDao
             'port'=>PORT,
             'charset'=>CHARSET
         ]);;
+
     }
 
 

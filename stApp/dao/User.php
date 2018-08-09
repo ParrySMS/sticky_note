@@ -33,7 +33,7 @@ class User extends BaseDao
         ]);
 
         if (!is_array($data)) {
-            throw new Exception(__CLASS__ . __FUNCTION__ . ' error', 500);
+            throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
         }
 
         //空数组 查不到
@@ -73,7 +73,7 @@ class User extends BaseDao
 //        ]);
 //        $row = $pdo->rowCount();
 //        if ($row != 1) {//插入1条失败
-//            throw new Exception(__CLASS__ . __FUNCTION__ . ' error', 500);
+//            throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
 //        }
 //
 //        return $this->database->id();
@@ -101,7 +101,7 @@ class User extends BaseDao
         ]);
         $row = $pdo->rowCount();
         if ($row != 1) {//插入1条失败
-            throw new Exception( __CLASS__ . __FUNCTION__ . ' error', 500);
+            throw new Exception( __CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
         }
 
         return $this->database->id();
