@@ -56,7 +56,7 @@ class LogicCheck extends PmCheck
         }
 
         $openid = $user->getOpenid($uid);
-        if (md5($openid) != $md5_openid) {
+        if (!md5($openid) === $md5_openid) {
             throw new Exception('TOKEN_ERROR: invalid token3', 403);
         }
 
@@ -74,11 +74,21 @@ class LogicCheck extends PmCheck
     {
         //空检查 可能会有数字0 故不用empty
         if(is_null($note)||$note === ''){
-            throw new Exception('note null',400);
+            throw new Exception('text null',400);
         }
         //长度检查
         return $this->lenCheck($note);
+    }
 
+    /** code空检查
+     * @param $code
+     * @throws Exception
+     */
+    public function code($code)
+    {
+        if(empty($code)){
+            throw new Exception('code null',400);
+        }
     }
 
 

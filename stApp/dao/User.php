@@ -36,12 +36,12 @@ class User extends BaseDao
             throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
         }
 
-        //空数组 查不到
-        if (sizeof($data) == 0) {
+        //找不到唯一的一个
+        if (sizeof($data) != 1) {
             return 0;
         }
 
-        return $data;
+        return $data[0];
     }
 
     /** 该方法弃用 插入新用户并返回id 输入多参数
@@ -98,6 +98,8 @@ class User extends BaseDao
             'headimgurl' => $info->headimgurl,
             'privilege' => $info->privilege,
             'unionid' => $info->unionid,
+            'time'=>date('Y-m-d H:i:s'),
+            'visible'=>1
         ]);
         $row = $pdo->rowCount();
         if ($row != 1) {//插入1条失败
@@ -134,7 +136,8 @@ class User extends BaseDao
         ],[
             'AND'=>[
                 'id'=>$uid,
-                'visible[!]'=>0
+                'visible'=>1
+                //todo 关于visible的条件问题要重写构思
             ]
         ]);
 

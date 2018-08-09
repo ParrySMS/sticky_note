@@ -10,6 +10,8 @@
 namespace stApp\controller;
 
 use Exception;
+use stApp\common\LogicCheck;
+use stApp\common\PmCheck;
 use stApp\service\WxRequest;
 use stApp\service\CreateToken;
 
@@ -31,6 +33,8 @@ class Login extends BaseController
     public function __construct($code)
     {
         try {
+            $check = new LogicCheck(false);
+            $check->code($code);
 
             $this->wx_login($code);
 
@@ -63,6 +67,7 @@ class Login extends BaseController
             throw new Exception(__CLASS__.__FUNCTION__ . ' error: token empty', 500);
         }
         //token创建成功
+        $this->token = $token;
         $this->echoJson($scCT->getJson());
     }
 

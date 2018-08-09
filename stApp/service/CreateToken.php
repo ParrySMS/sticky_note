@@ -48,7 +48,7 @@ class CreateToken extends BaseService
                 return 0;
             }
 
-            if($visible == 0){//黑名单用户
+            if($visible == 0){//黑名单 已删除用户
                 throw new Exception(MSG_BLACK_USER,20040301);
             }
             //正常老用户

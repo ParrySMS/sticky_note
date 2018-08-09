@@ -38,8 +38,8 @@ $app->group('/note',function () {
 
     //插入新数据
     $this->post('', function ($request, $response) {
-        $note_text = isset($request->getParsedBody()['note_text']) ? $request->getParsedBody()["note_text"] : null;
-        $c_note = new \stApp\controller\postNote($note_text);
+        $text = isset($request->getParsedBody()['text']) ? $request->getParsedBody()["text"] : null;
+        $c_note = new \stApp\controller\postNote($text);
         return $response->withStatus($c_note->getStatus());
     });
 

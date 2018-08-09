@@ -42,7 +42,7 @@ class WxRequest
 
         //appid 和 appsecret在配置文件中
         //根据code获得Access Token 与 openid
-        $access_token_url = $this::WXSNS_URL .'wxsns/access_token';
+        $access_token_url = $this::WXSNS_URL .'oauth2/access_token';
         $data = [
             'appid' => $this->app_id,
             'secret' => $this->app_secret,
@@ -75,14 +75,14 @@ class WxRequest
      * @throws Exception
      */
     public function refresh_token($access_token){
-        $refresh_url = $this::WXSNS_URL .'wxsns/refresh_token';
+        $refresh_url = $this::WXSNS_URL .'oauth2/refresh_token';
         $data = [
             'appid' => $this->app_id,
             'refresh_token' => $access_token,
             'grant_type' => 'refresh_token'
         ];
         $refresh_json = $this->http->get($refresh_url,$data);
-        $refresh_object = json_decode($refresh_json, true);
+        $refresh_object = json_decode($refresh_json);
         if (isset($refresh_object->errmsg)) {
             $errmsg = $refresh_object->errmsg;
             $errcode = $refresh_object->errcode;
@@ -115,7 +115,7 @@ class WxRequest
             'lang' => 'zh_CN'
         ];
         $userinfo_json = $this->http->get($userinfo_url,$data);
-        $userinfo_object = json_decode($userinfo_json, true);
+        $userinfo_object = json_decode($userinfo_json);
         if (isset($userinfo_object->errmsg)) {
             $errmsg = $userinfo_object->errmsg;
             $errcode = $userinfo_object->errcode;

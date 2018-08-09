@@ -38,7 +38,8 @@ class Note extends BaseService
 //            $content = $content . '...';
 //        }
 
-        $retdata = new \stApp\model\Note($nid,$note_text,$day_time);
+        $note_mod = new \stApp\model\Note($nid,$note_text,$day_time);
+        $retdata = (object)['note'=>$note_mod];
         $this->json->setRetdata($retdata);
         return $this->json;
     }

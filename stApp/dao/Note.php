@@ -38,14 +38,15 @@ class Note extends BaseDao
             'status'=>$status,
             'is_top'=>$is_top,
             'commit_time'=>$commit_time,
-            'edit_time'=>null,
             'finish_time'=>null,
+            'edit_time'=>null,
             'total_edit'=>0,
             'visible'=>1
         ]);
 
         $id = $this->database->id();
         if (!is_numeric($id) || $id < 1) {
+//          var_dump($this->database->error());
             throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
         }
 
