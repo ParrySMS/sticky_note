@@ -52,7 +52,7 @@ class LogicCheck extends PmCheck
 
         $user = new User();
         if (!$user->hasUser($uid)) {
-            throw new Exception(MSG_BLACK_USER, 20040301);
+            throw new Exception(MSG_NO_USER, 20040302);
         }
 
         $openid = $user->getOpenid($uid);
@@ -89,6 +89,20 @@ class LogicCheck extends PmCheck
         if(empty($code)){
             throw new Exception('code null',400);
         }
+    }
+
+    /** 检查nid
+     * @param $nid
+     * @param bool $intval
+     * @return int|null|string
+     * @throws Exception
+     */
+    public function nid($nid, $intval = true){
+        $nid = $this->getNumeric($nid,$intval);
+        if($nid === null){
+            throw new Exception('nid null',400);
+        }
+        return $nid;
     }
 
 

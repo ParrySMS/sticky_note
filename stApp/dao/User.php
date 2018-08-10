@@ -28,16 +28,21 @@ class User extends BaseDao
         ], [
             'AND' => [
                 'openid' => $openid,
-                // 'visible[!]' => 0
+                 'visible[!]' => USER_VISIBLE_DELETED
             ]
         ]);
 
         if (!is_array($data)) {
-            throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): error', 500);
+            throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): data type error', 500);
         }
 
-        //找不到唯一的一个
-        if (sizeof($data) != 1) {
+        //找到超过1个 数据有问题 黑名单与正常名单共存 或用户重复
+        if (sizeof($data) > 1) {
+            throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): data mutil error', 500);
+        }
+
+        //找不到
+        if (sizeof($data) == 0) {
             return 0;
         }
 
@@ -98,8 +103,8 @@ class User extends BaseDao
             'headimgurl' => $info->headimgurl,
             'privilege' => $info->privilege,
             'unionid' => $info->unionid,
-            'time'=>date('Y-m-d H:i:s'),
-            'visible'=>1
+            'time'=>date(DB_TIME_FORMAT),
+            'visible'=>USER_VISIBLE_NORMAL
         ]);
         $row = $pdo->rowCount();
         if ($row != 1) {//插入1条失败
@@ -118,7 +123,7 @@ class User extends BaseDao
             $has = $this->database->has($this->table,[
                 'AND'=>[
                     'id'=>$uid,
-                    'visible[!]'=>0
+                    'visible[!]'=>USER_VISIBLE_DELETED
                 ]
             ]);
 
@@ -136,13 +141,12 @@ class User extends BaseDao
         ],[
             'AND'=>[
                 'id'=>$uid,
-                'visible'=>1
-                //todo 关于visible的条件问题要重写构思
+                'visible'=>USER_VISIBLE_NORMAL
             ]
         ]);
 
         if(!is_array($data)||sizeof($data)==0){
-            throw new Exception(__CLASS__.__FUNCTION__.' error',500);
+            throw new Exception(__CLASS__.__FUNCTION__.'() error',500);
         }
     }
 

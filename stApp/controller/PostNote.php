@@ -11,7 +11,7 @@ use \Exception;
 use stApp\common\LogicCheck;
 use stApp\service\Note;
 
-class postNote extends BaseController
+class PostNote extends BaseController
 {
     /**
      * postNote constructor.

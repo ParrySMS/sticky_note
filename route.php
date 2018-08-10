@@ -39,13 +39,13 @@ $app->group('/note',function () {
     //插入新数据
     $this->post('', function ($request, $response) {
         $text = isset($request->getParsedBody()['text']) ? $request->getParsedBody()["text"] : null;
-        $c_note = new \stApp\controller\postNote($text);
+        $c_note = new \stApp\controller\PostNote($text);
         return $response->withStatus($c_note->getStatus());
     });
 
     $this->post('/finished/{nid}', function ($request, $response,array $args) {
         $nid = isset($args['nid'])?$args['nid']:null;
-//        $c_status = new
+        $c_status = new
 
     });
     $this->post('/unfinished/{nid}', function ($request, $response,array $args) {

@@ -48,7 +48,7 @@ class CreateToken extends BaseService
                 return 0;
             }
 
-            if($visible == 0){//黑名单 已删除用户
+            if($visible == USER_VISIBLE_BLACK){//黑名单 已删除用户
                 throw new Exception(MSG_BLACK_USER,20040301);
             }
             //正常老用户
@@ -63,31 +63,31 @@ class CreateToken extends BaseService
     }
 
     // 该方法弃用  首次进入 创建用户 改为不拆分
-    private function getNewUserid($info){
-        /**   正常返回
-        openid	用户的唯一标识
-        nickname	用户昵称
-        sex	用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
-        province	用户个人资料填写的省份
-        city	普通用户个人资料填写的城市
-        country	国家，如中国为CN
-        headimgurl	用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空。若用户更换头像，原有头像URL将失效。
-        privilege	用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
-        unionid	只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
-         */
-
-        $openid = $info->openid;
-        $nickname = $info->nickname;
-        $sex = $info->sex;
-        $province = $info->province;
-        $city = $info->city;
-        $country = $info->country;
-        $headimgurl = $info->headimgurl;
-        $privilege = $info->privilege;
-        $unionid = $info->unionid;
-       return $this->user->insertUser_multiPm($openid,$nickname,$sex,$province,$city,$country,$headimgurl,$privilege,$unionid);
-
-    }
+//    private function getNewUserid($info){
+//        /**   正常返回
+//        openid	用户的唯一标识
+//        nickname	用户昵称
+//        sex	用户的性别，值为1时是男性，值为2时是女性，值为0时是未知
+//        province	用户个人资料填写的省份
+//        city	普通用户个人资料填写的城市
+//        country	国家，如中国为CN
+//        headimgurl	用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空。若用户更换头像，原有头像URL将失效。
+//        privilege	用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
+//        unionid	只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
+//         */
+//
+//        $openid = $info->openid;
+//        $nickname = $info->nickname;
+//        $sex = $info->sex;
+//        $province = $info->province;
+//        $city = $info->city;
+//        $country = $info->country;
+//        $headimgurl = $info->headimgurl;
+//        $privilege = $info->privilege;
+//        $unionid = $info->unionid;
+//       return $this->user->insertUser_multiPm($openid,$nickname,$sex,$province,$city,$country,$headimgurl,$privilege,$unionid);
+//
+//    }
 
 
     /** 根据参数生成token
