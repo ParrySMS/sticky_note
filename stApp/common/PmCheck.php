@@ -14,7 +14,7 @@ use Exception;
 class PmCheck
 {
 
-    /** 进行了参数的防注入异常检查
+    /** 进行了参数的防注入异常检查 默认传输不加密
      * PmCheck constructor.
      * @param bool $is_encode
      */
@@ -97,7 +97,10 @@ class PmCheck
     }
 
 
-// 数组遍历过滤函数
+    /** 数组遍历进行检查
+     * @param $array
+     * @return array|mixed|string
+     */
     protected function arrayCheck(&$array)
     {
         //如果是数组，遍历数组，递归调用
@@ -109,7 +112,7 @@ class PmCheck
             $array = $this->strCheck($array);
         } else if (is_numeric($array)) {
             //不适用强制转换
-//            $array = intval($array);
+//            $array = getNumeric($array);
         }
         return $array;
     }
@@ -188,8 +191,6 @@ class PmCheck
 
         return $wx;
     }
-
-
 
 
 

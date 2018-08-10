@@ -8,7 +8,9 @@
 
 namespace stApp\controller;
 use \Exception;
+use stApp\common\Http;
 use stApp\model\Json;
+use stApp\service\Log;
 
 class BaseController
 {
@@ -54,10 +56,14 @@ class BaseController
     }
 
 
+    public function actionLog($uid){
+        //todo 調整log
+        new Log($uid);
+    }
     /**
      * 继承类将通过 __construct方法
-     * 调用具体的model类 并返回json
-     * model类会调用dao类进行数据库操作
+     * 调用具体的 server 类 并返回json
+     * server 类会调用dao类进行数据库操作
      *   或某些不需要数据库的功能进行直接实现
      **/
 

@@ -35,6 +35,25 @@ class EditNote extends BaseController
 
     }
 
+    public function top($nid)
+    {
+        try {
+            //参数检查
+            $check = new LogicCheck();
+            $uid = $check->token_info['uid'];
+            $nid = $check->nid($nid);
+
+            $this->setNoteTop($uid,$nid);
+
+        } catch (Exception $e) {
+            $this->error($e);
+        }
+
+
+    }
+
+
+
     /** 实现不同类别具体状态调整
      * @param $uid
      * @param $nid
@@ -56,6 +75,8 @@ class EditNote extends BaseController
                 throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): $note_status value error', 500);
 
         }
+
+
         $this->echoJson($json);
     }
 
