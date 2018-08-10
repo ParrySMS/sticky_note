@@ -43,16 +43,31 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
+    //勾选已完成
     $this->post('/finished/{nid}', function ($request, $response,array $args) {
         $nid = isset($args['nid'])?$args['nid']:null;
-        $c_status = new
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->editStatus($nid,NOTE_STATUS_FINISHED);
+        return $response->withStatus($c_note->getStatus());
 
     });
+
+    //勾选未完成
     $this->post('/unfinished/{nid}', function ($request, $response,array $args) {
         $nid = isset($args['nid'])?$args['nid']:null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->editStatus($nid,NOTE_STATUS_UNFINISHED);
+        return $response->withStatus($c_note->getStatus());
+    });
+
+    //置顶
+    $this->post('/top/{nid}', function ($request, $response,array $args) {
+        $nid = isset($args['nid'])?$args['nid']:null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->top($nid);
+        return $response->withStatus($c_note->getStatus());
 
     });
-});
 
 
 

@@ -8,6 +8,7 @@
 
 namespace stApp\service;
 
+use \Exception;
 
 use stApp\model\Json;
 
@@ -25,7 +26,7 @@ class Note extends BaseService
      * @return Json
      * @throws \Exception
      */
-    public function post($uid,$note_text)
+    public function post($uid, $note_text)
     {
         $time = date(DB_TIME_FORMAT);
         $day_time = date(RET_TIME_FORMAT, strtotime($time));
@@ -37,11 +38,71 @@ class Note extends BaseService
 //        if (mb_strlen($content) == NOTE_SHOW_CONTENT_LEN) {
 //            $content = $content . '...';
 //        }
-
-        $note_mod = new \stApp\model\Note($nid,$note_text,$day_time);
-        $retdata = (object)['note'=>$note_mod];
+        $note_mod = new \stApp\model\Note($nid, $note_text, $day_time);
+        $retdata = (object)['note' => $note_mod];
         $this->json->setRetdata($retdata);
         return $this->json;
+    }
+
+
+    /** 调整状态为完成 先检查逻辑问题
+     * @param $uid
+     * @param $nid
+     * @return Json
+     * @throws Exception
+     */
+    public function finish($uid, $nid)
+    {
+        if($this->hasUserNote($uid,$nid,NOTE_STATUS_FINISHED)){
+            throw new Exception(MSG_HAS_FINISHED, 20040302);
+        }
+
+        $this->note->updateFinish($uid, $nid);
+
+        $retdata = (object)['nid' => $nid];
+        $this->json->setRetdata($retdata);
+        return $this->json;
+    }
+
+
+    /**调整状态为等待 先检查逻辑问题
+     * @param $uid
+     * @param $nid
+     * @return Json
+     * @throws Exception
+     */
+    public function unfinish($uid, $nid)
+    {
+        if($this->hasUserNote($uid,$nid,NOTE_STATUS_UNFINISHED)){
+            throw new Exception(MSG_HAS_UNFINISHED, 20040303);
+        }
+
+        $this->note->updateUnfinish($uid, $nid);
+
+        $retdata = (object)['nid' => $nid];
+        $this->json->setRetdata($retdata);
+        return $this->json;
+    }
+
+
+    /** 判断是否有某状态下的某个note
+     * @param $uid
+     * @param $nid
+     * @param $status
+     * @return bool
+     * @throws Exception
+     */
+    protected function hasUserNote($uid, $nid, $status)
+    {
+        $note_status = $this->note->getNoteStatus($uid, $nid);
+        //status 可能是0
+        if (is_null($note_status)||$note_status ==='') {
+            throw new Exception(MSG_NO_NOTE, 20040402);
+        }
+
+        return ($status == $note_status) ? true : false;
+
+
     }
 
 }

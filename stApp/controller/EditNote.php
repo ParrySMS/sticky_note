@@ -10,11 +10,16 @@ namespace stApp\controller;
 
 use \Exception;
 use stApp\common\LogicCheck;
+use stApp\service\Note;
 
 class EditNote extends BaseController
 {
 
-    public function editStatus($nid, $finish)
+    /** 调整状态控制器
+     * @param $nid
+     * @param $note_status
+     */
+    public function editStatus($nid, $note_status)
     {
         try {
             //参数检查
@@ -22,9 +27,7 @@ class EditNote extends BaseController
             $uid = $check->token_info['uid'];
             $nid = $check->nid($nid);
 
-            $note_status = ($finish === true) ? NOTE_STATUS_FINISHED : NOTE_STATUS_NOT_FINISH;
-
-            $this->setNoteStatus($nid, $note_status);
+            $this->setNoteStatus($uid,$nid, $note_status);
 
         } catch (Exception $e) {
             $this->error($e);
@@ -32,15 +35,28 @@ class EditNote extends BaseController
 
     }
 
-    public function setNoteStatus($nid, $note_status)
+    /** 实现不同类别具体状态调整
+     * @param $uid
+     * @param $nid
+     * @param $note_status
+     * @throws Exception
+     */
+    protected function setNoteStatus($uid,$nid, $note_status)
     {
+        $note = new Note();
+        switch ($note_status){
+            case NOTE_STATUS_UNFINISHED:
+                $json = $note->unfinish($uid,$nid);
+                break;
+            case NOTE_STATUS_FINISHED:
+                $json = $note->finish($uid,$nid);
+                break;
+                //预留未来可能多个状态区的设计
+            default:
+                throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): $note_status value error', 500);
 
-        if ($note_status == NOTE_STATUS_FINISHED) {
-            $finish_time = date(DB_TIME_FORMAT);
         }
-
-
-
+        $this->echoJson($json);
     }
 
 

@@ -25,7 +25,7 @@ class Note
      * @param $status
      * @param $is_top
      */
-    public function __construct($nid, $text, $time, $status=NOTE_STATUS_NOT_FINISH, $is_top =NOTE_NOT_TOP)
+    public function __construct($nid, $text, $time, $status=NOTE_STATUS_UNFINISHED, $is_top =NOTE_NOT_TOP)
     {
         $this->nid = $nid;
         $this->text = $text;

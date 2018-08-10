@@ -52,7 +52,7 @@ class LogicCheck extends PmCheck
 
         $user = new User();
         if (!$user->hasUser($uid)) {
-            throw new Exception(MSG_NO_USER, 20040302);
+            throw new Exception(MSG_NO_USER, 20040401);
         }
 
         $openid = $user->getOpenid($uid);

@@ -12,6 +12,7 @@ use stApp\model\Json;
 
 class BaseController
 {
+    //todo 做用户行为记录
 
     /**
      * @var int $status 用于路由调用的状态码 默认200
