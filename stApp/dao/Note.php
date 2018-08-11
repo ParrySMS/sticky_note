@@ -9,12 +9,21 @@
 namespace stApp\dao;
 
 use \Exception;
-use stApp\common\PmCheck;
 
 class Note extends BaseDao
 {
 
-    protected $table = PREFIX . '_note';
+    protected $table;
+
+    /**
+     * Note constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->table = PREFIX.'_note';
+    }
+
 
     /** 插入新信息并且获取id
      * @param $uid
@@ -29,7 +38,7 @@ class Note extends BaseDao
     {
         //秒级时间
         if ($commit_time === null) {
-            $commit_time = date('Y-m-d H:i:s');
+            $commit_time = date(DB_TIME_FORMAT);
         }
 
         $pdo = $this->database->insert($this->table, [
@@ -65,7 +74,7 @@ class Note extends BaseDao
     {
         //秒级时间
         if ($finish_time === null) {
-            $finish_time = date('Y-m-d H:i:s');
+            $finish_time = date(DB_TIME_FORMAT);
         }
 
         $pdo = $this->database->update($this->table, [
@@ -92,7 +101,7 @@ class Note extends BaseDao
     {
         //秒级时间
         if ($commit_time === null) {
-            $commit_time = date('Y-m-d H:i:s');
+            $commit_time = date(DB_TIME_FORMAT);
         }
 
         //相当于把已结束的重新发布 原先的完成时间还是保留着

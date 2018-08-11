@@ -13,7 +13,17 @@ use Exception;
 
 class User extends BaseDao
 {
-    protected $table = PREFIX . '_user';
+    protected $table;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->table = PREFIX.'_user';
+    }
+
 
     /** 根据openid返回uid 如果没有则返回0
      * @param $openid

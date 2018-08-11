@@ -7,19 +7,25 @@
  */
 
 namespace stApp\controller;
+
 use \Exception;
-use stApp\common\Http;
 use stApp\model\Json;
-use stApp\service\Log;
+use stApp\common\Log;
 
 class BaseController
 {
-    //todo 做用户行为记录
-
     /**
      * @var int $status 用于路由调用的状态码 默认200
      */
     protected $status = 200;
+
+
+
+    //todo 做用户行为记录
+    public function actionLog($uid)
+    {
+        new Log($uid);
+    }
 
     /** getter方法
      * @return int
@@ -35,6 +41,7 @@ class BaseController
     {
         $this->status = $status;
     }
+
 
     public function error(Exception $e){
         if ($e->getCode() <= 505) {//非200 直接输出
@@ -56,10 +63,7 @@ class BaseController
     }
 
 
-    public function actionLog($uid){
-        //todo 調整log
-        new Log($uid);
-    }
+
     /**
      * 继承类将通过 __construct方法
      * 调用具体的 server 类 并返回json
