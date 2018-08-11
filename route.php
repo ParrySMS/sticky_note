@@ -60,11 +60,20 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
-    //置顶
+    //置顶 top置顶note
     $this->post('/top/{nid}', function ($request, $response,array $args) {
         $nid = isset($args['nid'])?$args['nid']:null;
         $c_note = new \stApp\controller\EditNote();
-        $c_note->top($nid);
+        $c_note->top($nid,NOTE_IS_TOP);
+        return $response->withStatus($c_note->getStatus());
+
+    });
+
+    //取消置顶 common普通note
+    $this->post('/common/{nid}', function ($request, $response,array $args) {
+        $nid = isset($args['nid'])?$args['nid']:null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->top($nid,NOTE_NOT_TOP);
         return $response->withStatus($c_note->getStatus());
 
     });

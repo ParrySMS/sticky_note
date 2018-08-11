@@ -90,9 +90,10 @@ class Note extends BaseService
     }
 
 
-    public function top($uid, $nid, $need_top)
+    public function top($uid, $nid, $top_status)
     {
-        if ($this->hasNoteTop($uid, $nid, NOTE_STATUS_FINISHED)) {
+        //todo 不同类别的报错怎么处理
+        if ($this->hasNoteTop($uid, $nid, $top_status)) {
             throw new Exception(MSG_HAS_FINISHED, 20040302);
         }
 

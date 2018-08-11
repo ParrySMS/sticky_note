@@ -104,11 +104,10 @@ class EditNote extends BaseController
     {
         switch ($top_status) {
             //因为只涉及到一个 is_top 字段  所以合并成一个函数
-            case NOTE_NOT_TOP:
-                $json = $this->note->top($uid, $nid, false);
-                break;
             case NOTE_IS_TOP:
-                $json = $this->note->top($uid, $nid, true);
+            case NOTE_NOT_TOP:
+                //TODO 到底要不要用一个函数
+                $json = $this->note->top($uid, $nid, $top_status);
                 break;
             //预留未来可能多个状态区的设计
             default:
