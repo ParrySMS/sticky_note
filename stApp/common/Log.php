@@ -37,7 +37,7 @@ class Log
         $ip = $http->getIP();
         $agent = $http->getAgent();
         $uri = $_SERVER['REQUEST_URI'];
-        //todo 实现dao类
+        // 实现dao类
         $action = new Action();
         $action->insert($uid,$ip,$agent,$uri);
 

@@ -21,7 +21,7 @@ class Note extends BaseDao
     public function __construct()
     {
         parent::__construct();
-        $this->table = PREFIX.'_note';
+        $this->table = PREFIX . '_note';
     }
 
 
@@ -50,7 +50,7 @@ class Note extends BaseDao
             'finish_time' => null,
             'edit_time' => null,
             'total_edit' => 0,
-            'visible' => 1
+            'visible' => NOTE_VISIBLE_NORMAL
         ]);
 
         $id = $this->database->id();
@@ -79,13 +79,13 @@ class Note extends BaseDao
 
         $pdo = $this->database->update($this->table, [
             'status' => $status,
-            'is_top' => 0,//改变状态 默认清除置顶
+            'is_top' => NOTE_NOT_TOP,//改变状态 默认清除置顶
             'finish_time' => $finish_time,
         ], [
             'AND' => [
                 'id' => $nid,
                 'uid' => $uid,
-                'visible[!]' => 0
+                'visible[!]' => NOTE_VISIBLE_DELETED
             ]
         ]);
 
@@ -107,13 +107,13 @@ class Note extends BaseDao
         //相当于把已结束的重新发布 原先的完成时间还是保留着
         $pdo = $this->database->update($this->table, [
             'status' => $status,
-            'is_top' => 0,//改变状态 默认清除置顶
-            'commit_time'=>$commit_time,
+            'is_top' => NOTE_NOT_TOP,//改变状态 默认清除置顶
+            'commit_time' => $commit_time,
         ], [
             'AND' => [
                 'id' => $nid,
                 'uid' => $uid,
-                'visible[!]' => 0
+                'visible[!]' => NOTE_VISIBLE_DELETED
             ]
         ]);
 
@@ -137,11 +137,28 @@ class Note extends BaseDao
                 'AND' => [
                     'id' => $nid,
                     'uid' => $uid,
-                    'visible[!]' => 0
+                    'visible[!]' => NOTE_VISIBLE_DELETED
                 ]
             ]);
 
         return $status;
+
+    }
+
+
+    public function getNoteTop($uid, $nid)
+    {
+        $top = $this->database->get($this->table,
+            'is_top',
+            [
+                'AND' => [
+                    'id' => $nid,
+                    'uid' => $uid,
+                    'visible[!]' => NOTE_VISIBLE_DELETED
+                ]
+            ]);
+
+        return $top;
 
     }
 }

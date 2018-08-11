@@ -91,18 +91,18 @@ class LogicCheck extends PmCheck
         }
     }
 
-    /** 检查nid
-     * @param $nid
+    /** 检查id
+     * @param $id
      * @param bool $intval
      * @return int|null|string
      * @throws Exception
      */
-    public function nid($nid, $intval = true){
-        $nid = $this->getNumeric($nid,$intval);
-        if($nid === null){
-            throw new Exception('nid null',400);
+    public function id($id, $intval = true){
+        $id = $this->getNumeric($id,$intval);
+        if($id === null){
+            throw new Exception('id null',400);
         }
-        return $nid;
+        return $id;
     }
 
 

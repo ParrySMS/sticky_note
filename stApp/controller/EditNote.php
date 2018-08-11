@@ -14,20 +14,43 @@ use stApp\service\Note;
 
 class EditNote extends BaseController
 {
+    private $check;
+    private $uid;
+    private $note;
+
+    /**
+     * EditNote constructor.
+     */
+    public function __construct($has_token = true)
+    {
+        try {
+            //参数检查
+            $this->check = new LogicCheck($has_token);
+            $uid = $this->check->token_info['uid'];
+            $this->uid = $this->check->id($uid);
+            //行为记录
+            $this->actionLog($this->uid);
+
+            $this->note = new Note();
+
+        } catch (Exception $e) {
+            $this->error($e);
+        }
+    }
 
     /** 调整状态控制器
      * @param $nid
      * @param $note_status
      */
+
+
     public function editStatus($nid, $note_status)
     {
         try {
-            //参数检查
-            $check = new LogicCheck();
-            $uid = $check->token_info['uid'];
-            $nid = $check->nid($nid);
 
-            $this->setNoteStatus($uid,$nid, $note_status);
+            $nid = $this->check->id($nid);
+
+            $this->setNoteStatus($this->uid, $nid, $note_status);
 
         } catch (Exception $e) {
             $this->error($e);
@@ -35,15 +58,14 @@ class EditNote extends BaseController
 
     }
 
-    public function top($nid)
+    public function top($nid, $top_status)
     {
         try {
             //参数检查
-            $check = new LogicCheck();
-            $uid = $check->token_info['uid'];
-            $nid = $check->nid($nid);
 
-            $this->setNoteTop($uid,$nid);
+            $nid = $this->check->id($nid);
+
+            $this->setNoteTop($this->uid, $nid, $top_status);
 
         } catch (Exception $e) {
             $this->error($e);
@@ -51,7 +73,6 @@ class EditNote extends BaseController
 
 
     }
-
 
 
     /** 实现不同类别具体状态调整
@@ -60,23 +81,40 @@ class EditNote extends BaseController
      * @param $note_status
      * @throws Exception
      */
-    protected function setNoteStatus($uid,$nid, $note_status)
+    protected function setNoteStatus($uid, $nid, $note_status)
     {
-        $note = new Note();
-        switch ($note_status){
+
+        switch ($note_status) {
+            //因为不同状态涉及到时间等多个参数 故分开写函数
             case NOTE_STATUS_UNFINISHED:
-                $json = $note->unfinish($uid,$nid);
+                $json = $this->note->unfinish($uid, $nid);
                 break;
             case NOTE_STATUS_FINISHED:
-                $json = $note->finish($uid,$nid);
+                $json = $this->note->finish($uid, $nid);
                 break;
-                //预留未来可能多个状态区的设计
+            //预留未来可能多个状态区的设计
             default:
-                throw new Exception(__CLASS__ .'->'. __FUNCTION__ . '(): $note_status value error', 500);
+                throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): $note_status value error', 500);
 
         }
+        $this->echoJson($json);
+    }
 
+    protected function setNoteTop($uid, $nid, $top_status)
+    {
+        switch ($top_status) {
+            //因为只涉及到一个 is_top 字段  所以合并成一个函数
+            case NOTE_NOT_TOP:
+                $json = $this->note->top($uid, $nid, false);
+                break;
+            case NOTE_IS_TOP:
+                $json = $this->note->top($uid, $nid, true);
+                break;
+            //预留未来可能多个状态区的设计
+            default:
+                throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): $top_status value error', 500);
 
+        }
         $this->echoJson($json);
     }
 

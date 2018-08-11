@@ -21,7 +21,7 @@ class BaseController
 
 
 
-    //todo 做用户行为记录
+    // 做用户行为记录
     public function actionLog($uid)
     {
         new Log($uid);

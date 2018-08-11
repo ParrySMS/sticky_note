@@ -14,6 +14,11 @@ use stApp\model\Json;
 
 class Note extends BaseService
 {
+    private $note;
+
+    /** 创建操作的dao 和 返回的json
+     * Note constructor.
+     */
     public function __construct()
     {
         $this->note = new \stApp\dao\Note();
@@ -53,7 +58,7 @@ class Note extends BaseService
      */
     public function finish($uid, $nid)
     {
-        if($this->hasUserNote($uid,$nid,NOTE_STATUS_FINISHED)){
+        if ($this->hasNoteStatus($uid, $nid, NOTE_STATUS_FINISHED)) {
             throw new Exception(MSG_HAS_FINISHED, 20040302);
         }
 
@@ -73,11 +78,25 @@ class Note extends BaseService
      */
     public function unfinish($uid, $nid)
     {
-        if($this->hasUserNote($uid,$nid,NOTE_STATUS_UNFINISHED)){
+        if ($this->hasNoteStatus($uid, $nid, NOTE_STATUS_UNFINISHED)) {
             throw new Exception(MSG_HAS_UNFINISHED, 20040303);
         }
 
         $this->note->updateUnfinish($uid, $nid);
+
+        $retdata = (object)['nid' => $nid];
+        $this->json->setRetdata($retdata);
+        return $this->json;
+    }
+
+
+    public function top($uid, $nid, $need_top)
+    {
+        if ($this->hasNoteTop($uid, $nid, NOTE_STATUS_FINISHED)) {
+            throw new Exception(MSG_HAS_FINISHED, 20040302);
+        }
+
+        $this->note->updateFinish($uid, $nid);
 
         $retdata = (object)['nid' => $nid];
         $this->json->setRetdata($retdata);
@@ -92,17 +111,30 @@ class Note extends BaseService
      * @return bool
      * @throws Exception
      */
-    protected function hasUserNote($uid, $nid, $status)
+    protected function hasNoteStatus($uid, $nid, $status)
     {
         $note_status = $this->note->getNoteStatus($uid, $nid);
         //status 可能是0
-        if (is_null($note_status)||$note_status ==='') {
+        if (is_null($note_status) || $note_status === '') {
             throw new Exception(MSG_NO_NOTE, 20040402);
         }
 
         return ($status == $note_status) ? true : false;
-
-
     }
+
+
+    protected function hasNoteTop($uid, $nid, $is_top)
+    {
+        $is_top = $this->note->getNoteTop($uid, $nid);
+        //status 可能是0
+        if (is_null($note_status) || $note_status === '') {
+            throw new Exception(MSG_NO_NOTE, 20040402);
+        }
+
+        return ($status == $note_status) ? true : false;
+    }
+
+
+
 
 }

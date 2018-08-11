@@ -43,7 +43,7 @@ class Action extends BaseDao
             'ip'=>$ip,
             'uri'=>$uri,
             'time'=>$time,
-            'visible'=>1
+            'visible'=>VISIBLE_NORMAL
         ]);
 
         $id = $this->database->id();
