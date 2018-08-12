@@ -18,13 +18,18 @@ class BaseController
      * @var int $status 用于路由调用的状态码 默认200
      */
     protected $status = 200;
+    private $uid;
 
 
-
-    // 做用户行为记录
-    public function actionLog($uid)
+    /** 做用户行为记录
+     * @param null $uid
+     * @param null $error_code
+     */
+    public function actionLog($uid = null,$error_code = null)
     {
-        new Log($uid);
+        $this->uid = $uid;
+        $log = new Log();
+        $log->action($uid,$error_code);
     }
 
     /** getter方法
@@ -43,7 +48,11 @@ class BaseController
     }
 
 
+    /** 进行报错码的处理 分为200下和非200下报错
+     * @param Exception $e
+     */
     public function error(Exception $e){
+        $this->actionLog($this->uid,$e->getCode());
         if ($e->getCode() <= 505) {//非200 直接输出
             $this->setStatus($e->getCode());
             echo MSG_ERROR_INFO . $e->getMessage();
@@ -55,6 +64,9 @@ class BaseController
         }
     }
 
+    /** 输出json对象
+     * @param Json $json
+     */
     public function echoJson(Json $json)
     {
         if (!is_null($json)) {

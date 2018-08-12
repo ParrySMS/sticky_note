@@ -8,38 +8,24 @@
 
 namespace stApp\common;
 
-
-
 use stApp\dao\Action;
 
 class Log
 {
 
 
-    /**
-     * Log constructor.
-     */
-    public function __construct($uid)
-    {
-        //这个uid 必须是已经检查过的
-
-        //默认直接进行记录action行为
-        $this->action($uid);
-
-    }
-
-    /** 记录action
+    /** 记录action,进入记录一次，报错记录一次
      * @param $uid
-     * @throws \Exception
      */
-    public function action($uid){
+    public function action($uid, $error_code = null)
+    {
         $http = new Http();
         $ip = $http->getIP();
         $agent = $http->getAgent();
         $uri = $_SERVER['REQUEST_URI'];
         // 实现dao类
         $action = new Action();
-        $action->insert($uid,$ip,$agent,$uri);
+        $action->insert($uid, $ip, $agent, $uri, $error_code);
 
     }
 

@@ -21,15 +21,22 @@ class PostNote extends BaseController
         try {
             $check = new LogicCheck();
             $uid = $check->token_info['uid'];
+            $uid = $check->id($uid);
+            //记录行为
+            $this->actionLog($uid);
 
             $note_text = $check->note($note_text);
             $this->post($uid,$note_text);
-
         }catch (Exception $e){
             $this->error($e);
         }
     }
 
+    /** 实现新增note
+     * @param $uid
+     * @param $note_text
+     * @throws Exception
+     */
     private function post($uid,$note_text){
         $note = new Note();
         $this->echoJson($note->post($uid,$note_text));

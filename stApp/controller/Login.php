@@ -33,11 +33,11 @@ class Login extends BaseController
     public function __construct($code)
     {
         try {
+            $this->actionLog();
             $check = new LogicCheck(false);
             $check->code($code);
 
             $this->wx_login($code);
-
 
         } catch (Exception $e) {
             $this->error($e);

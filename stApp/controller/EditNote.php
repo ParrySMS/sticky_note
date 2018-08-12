@@ -32,7 +32,6 @@ class EditNote extends BaseController
             $this->actionLog($this->uid);
 
             $this->note = new Note();
-
         } catch (Exception $e) {
             $this->error($e);
         }

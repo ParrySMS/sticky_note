@@ -26,11 +26,11 @@ class Action extends BaseDao
      * @param $ip
      * @param $agent
      * @param $uri
+     * @param $error_code
      * @param null $time
      * @return int|mixed|string
-     * @throws Exception
      */
-    public function insert($uid,$ip,$agent,$uri,$time = null)
+    public function insert($uid,$ip,$agent,$uri,$error_code,$time = null)
     {
         //秒级时间
         if ($time === null) {
@@ -42,16 +42,18 @@ class Action extends BaseDao
             'agent'=>$agent,
             'ip'=>$ip,
             'uri'=>$uri,
+            'error_code'=>$error_code,
             'time'=>$time,
             'visible'=>VISIBLE_NORMAL
         ]);
 
         $id = $this->database->id();
+        //因为可能是在catch块里的记录 所以不适用throw报错
         if (!is_numeric($id) || $id < 1) {
 //          var_dump($this->database->error());
-            throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
+            echo '<br/>'.__CLASS__ . '->' . __FUNCTION__ . '(): error';
+//            throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
         }
-
         return $id;
     }
 
