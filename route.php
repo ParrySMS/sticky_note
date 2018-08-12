@@ -77,7 +77,14 @@ $app->group('/note',function () {
     });
 
     //todo 删除
+    //todo 编辑
 
+    //todo 获取首页
+    $this->get('', function ($request, $response) {
+        $c_note = new \stApp\controller\GetNote();
+        $c_note->init();
+        return $response->withStatus($c_note->getStatus());
+    });
 
 
 });

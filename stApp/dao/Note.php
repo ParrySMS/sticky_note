@@ -34,7 +34,7 @@ class Note extends BaseDao
      * @return int|mixed|string
      * @throws Exception
      */
-    public function insert($uid, $note_text, $commit_time = null, $status = NOTE_STATUS_UNFINISHED, $is_top = NOTE_IS_TOP)
+    public function insert($uid, $note_text, $commit_time = null, $status = NOTE_STATUS_UNFINISHED, $is_top = NOTE_NOT_TOP)
     {
         //秒级时间
         if ($commit_time === null) {
