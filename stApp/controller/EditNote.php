@@ -42,8 +42,6 @@ class EditNote extends BaseController
      * @param $nid
      * @param $note_status
      */
-
-
     public function editStatus($nid, $note_status)
     {
         try {
@@ -58,6 +56,10 @@ class EditNote extends BaseController
 
     }
 
+    /** 调整置顶控制器
+     * @param $nid
+     * @param $top_status
+     */
     public function top($nid, $top_status)
     {
         try {
@@ -100,13 +102,19 @@ class EditNote extends BaseController
         $this->echoJson($json);
     }
 
+    /** 设置置顶状态
+     * @param $uid
+     * @param $nid
+     * @param $top_status
+     * @throws Exception
+     */
     protected function setNoteTop($uid, $nid, $top_status)
     {
         switch ($top_status) {
             //因为只涉及到一个 is_top 字段  所以合并成一个函数
             case NOTE_IS_TOP:
             case NOTE_NOT_TOP:
-                //TODO 到底要不要用一个函数
+                //用一个函数
                 $json = $this->note->top($uid, $nid, $top_status);
                 break;
             //预留未来可能多个状态区的设计

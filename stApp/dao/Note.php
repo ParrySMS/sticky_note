@@ -146,6 +146,11 @@ class Note extends BaseDao
     }
 
 
+    /** 获取一个note的置顶状态
+     * @param $uid
+     * @param $nid
+     * @return array|bool|mixed
+     */
     public function getNoteTop($uid, $nid)
     {
         $top = $this->database->get($this->table,
@@ -159,6 +164,41 @@ class Note extends BaseDao
             ]);
 
         return $top;
+    }
+
+    /**  修改置顶状态
+     * @param $uid
+     * @param $nid
+     * @param $is_top
+     * @param null $edit_time
+     * @throws Exception
+     */
+
+    public function updateFieldIsTop($uid, $nid, $is_top, $edit_time = null)
+    {
+
+        //秒级时间
+        if ($edit_time === null) {
+            $edit_time = date(DB_TIME_FORMAT);
+        }
+
+        $pdo = $this->database->update($this->table, [
+            'is_top' => $is_top,
+            'edit_time' => $edit_time,
+            'total_edit[+]' => 1
+        ], [
+            'AND' => [
+                'id' => $nid,
+                'uid' => $uid,
+                'visible[!]' => NOTE_VISIBLE_DELETED
+            ]
+        ]);
+
+        $affected = $pdo->rowCount();
+        if (!is_numeric($affected) || $affected != 1) {
+            throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
+        }
+
 
     }
 }

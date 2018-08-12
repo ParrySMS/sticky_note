@@ -90,14 +90,22 @@ class Note extends BaseService
     }
 
 
+    /** 置顶或取消置顶操作
+     * @param $uid
+     * @param $nid
+     * @param $top_status
+     * @return Json
+     * @throws Exception
+     */
     public function top($uid, $nid, $top_status)
     {
-        //todo 不同类别的报错怎么处理
+        // 不同类别的报错 做过于频繁的处理
         if ($this->hasNoteTop($uid, $nid, $top_status)) {
-            throw new Exception(MSG_HAS_FINISHED, 20040302);
+            throw new Exception(MSG_HAS_TOPPED, 20040304);
         }
 
-        $this->note->updateFinish($uid, $nid);
+        //TODO 继续接
+        $this->note->updateFieldIsTop($uid, $nid,$top_status);
 
         $retdata = (object)['nid' => $nid];
         $this->json->setRetdata($retdata);
@@ -124,15 +132,22 @@ class Note extends BaseService
     }
 
 
-    protected function hasNoteTop($uid, $nid, $is_top)
+    /** 判断是否某状态下已经有对应置顶状态
+     * @param $uid
+     * @param $nid
+     * @param $top_status
+     * @return bool
+     * @throws Exception
+     */
+    protected function hasNoteTop($uid, $nid, $top_status)
     {
         $is_top = $this->note->getNoteTop($uid, $nid);
-        //status 可能是0
-        if (is_null($note_status) || $note_status === '') {
+        //$is_top 可能是0
+        if (is_null($is_top) || $is_top === '') {
             throw new Exception(MSG_NO_NOTE, 20040402);
         }
 
-        return ($status == $note_status) ? true : false;
+        return ($is_top == $top_status) ? true : false;
     }
 
 
