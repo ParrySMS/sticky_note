@@ -238,4 +238,26 @@ class Note extends BaseDao
         return $data;
 
     }
+
+    /** 删除 设置为不可见状态
+     * @param $uid
+     * @param $nid
+     * @param int $visible
+     * @throws Exception
+     */
+    public function setVisible($uid,$nid,$visible = NOTE_VISIBLE_DELETED)
+    {
+        $pdo = $this->database->update($this->table,[
+            'visible'=>$visible
+        ],[
+            'AND'=>[
+                'id'=>$nid,
+                'uid'=>$uid
+            ]
+        ]);
+        $affected = $pdo->rowCount();
+        if (!is_numeric($affected) || $affected != 1) {
+            throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
+        }
+    }
 }

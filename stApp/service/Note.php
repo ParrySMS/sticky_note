@@ -165,6 +165,24 @@ class Note extends BaseService
 
     }
 
+    /** 实现删除 返回nid
+     * @param $uid
+     * @param $nid
+     * @return Json
+     * @throws Exception
+     */
+    public function delete($uid,$nid)
+    {
+        $this->note->setVisible($uid,$nid);
+
+        $retdata = (object)[
+            'nid' => $nid
+        ];
+
+        $this->json->setRetdata($retdata);
+        return $this->json;
+    }
+
 
     /** 判断是否有某状态下的某个note
      * @param $uid

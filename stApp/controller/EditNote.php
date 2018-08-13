@@ -63,7 +63,6 @@ class EditNote extends BaseController
     {
         try {
             //参数检查
-
             $nid = $this->check->id($nid);
 
             $this->setNoteTop($this->uid, $nid, $top_status);
@@ -72,6 +71,23 @@ class EditNote extends BaseController
             $this->error($e);
         }
 
+
+    }
+
+    /** 软删除 控制器 故放进edit里
+     * @param $nid
+     */
+    public function delete($nid)
+    {
+        try {
+            //参数检查
+            $nid = $this->check->id($nid);
+            $json = $this->note->delete($this->uid,$nid);
+            $this->echoJson($json);
+
+        } catch (Exception $e) {
+            $this->error($e);
+        }
 
     }
 

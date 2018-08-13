@@ -77,7 +77,22 @@ $app->group('/note',function () {
     });
 
     //todo 删除
+    $this->post('/delete/{nid}', function ($request, $response, array $args) {
+        $nid = isset($args['nid']) ? $args['nid'] : null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->delete($nid);
+        return $response->withStatus($c_note->getStatus());
+    });
+
     //todo 编辑
+    $this->post('/edit/{nid}', function ($request, $response, array $args) {
+        $text = isset($request->getParsedBody()['text']) ? $request->getParsedBody()["text"] : null;
+        $nid = isset($args['nid']) ? $args['nid'] : null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->edit($nid,$text);
+        return $response->withStatus($c_note->getStatus());
+    });
+
 
     //获取首页的全部用户note
     $this->get('', function ($request, $response) {

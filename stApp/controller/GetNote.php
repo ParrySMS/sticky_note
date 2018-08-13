@@ -34,7 +34,7 @@ class GetNote extends BaseController
         }
     }
 
-    /**
+    /** 获取用户全部note
      * @throws Exception
      */
     public function init()
