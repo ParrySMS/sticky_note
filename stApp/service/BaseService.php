@@ -8,6 +8,7 @@
 
 namespace stApp\service;
 
+date_default_timezone_set("Asia/Shanghai");
 
 abstract class BaseService
 {

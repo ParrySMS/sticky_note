@@ -34,10 +34,11 @@ class GetNote extends BaseController
         }
     }
 
-    //todo 获取未完成 获取已完成 使用istop和committime分两次获取
-    //todo 一次获取全部数据 再进行分别排序？？
+    /**
+     * @throws Exception
+     */
     public function init()
     {
-        $this->note
+        $this->echoJson($this->note->getMyNote($this->uid));
     }
 }

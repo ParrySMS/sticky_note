@@ -19,19 +19,15 @@ class Note
 
     /**
      * Note constructor.
-     * @param $nid
-     * @param $text
-     * @param $time
-     * @param $status
-     * @param $is_top
+     * @param array $option
      */
-    public function __construct($nid, $text, $time, $status=NOTE_STATUS_UNFINISHED, $is_top =NOTE_NOT_TOP)
+    public function __construct(array $option)
     {
-        $this->nid = $nid;
-        $this->text = $text;
-        $this->time = $time;
-        $this->status = $status;
-        $this->is_top = $is_top;
+        $this->nid = isset($option['id'])?$option['id']:null;
+        $this->text = isset($option['text'])?$option['text']:null;
+        $this->time = isset($option['time'])?$option['time']:null;
+        $this->status = isset($option['status'])?$option['status']:NOTE_STATUS_UNFINISHED;
+        $this->is_top = isset($option['is_top'])?$option['is_top']:NOTE_NOT_TOP;
     }
 
 

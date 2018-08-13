@@ -43,7 +43,13 @@ class Note extends BaseService
 //        if (mb_strlen($content) == NOTE_SHOW_CONTENT_LEN) {
 //            $content = $content . '...';
 //        }
-        $note_mod = new \stApp\model\Note($nid, $note_text, $day_time);
+        $noteOption = [
+            'id' => $nid,
+            'text' => $note_text,
+            'time' => $day_time
+        ];
+
+        $note_mod = new \stApp\model\Note($noteOption);
         $retdata = (object)['note' => $note_mod];
         $this->json->setRetdata($retdata);
         return $this->json;
@@ -90,7 +96,7 @@ class Note extends BaseService
     }
 
 
-    /** 置顶或取消置顶操作
+    /**
      * @param $uid
      * @param $nid
      * @param $top_status
@@ -104,12 +110,59 @@ class Note extends BaseService
             throw new Exception(MSG_HAS_TOPPED, 20040304);
         }
 
-        //TODO 继续接
-        $this->note->updateFieldIsTop($uid, $nid,$top_status);
+        //继续接
+        $this->note->updateFieldIsTop($uid, $nid, $top_status);
 
         $retdata = (object)['nid' => $nid];
         $this->json->setRetdata($retdata);
         return $this->json;
+    }
+
+    /** 获取用户已经写了的note
+     * 通过两次链接数据库实现查询
+     * @param $uid
+     * @return Json
+     * @throws Exception
+     */
+    public function getMyNote($uid)
+    {
+        //用于保存的对象数组
+        unset($unfinished_notes);
+        $unfinished_notes = [];
+        unset($finished_notes);
+        $finished_notes = [];
+
+        //取数据
+        $unfinished_data = $this->note->getNotes($uid, NOTE_STATUS_UNFINISHED);
+
+        if (sizeof($unfinished_data) > 0) {//有数据的情况下
+            foreach ($unfinished_data as $d) {
+                $d['time'] = date(RET_TIME_FORMAT, strtotime($d['time']));
+                $unfinished_note = new \stApp\model\Note($d);
+                $unfinished_notes [] = $unfinished_note;
+            }
+        }
+
+        //取数据同理
+        $finished_data = $this->note->getNotes($uid, NOTE_STATUS_FINISHED);
+
+        if (sizeof($finished_data) > 0) {//有数据的情况下
+            foreach ($finished_data as $d) {
+                $d['time'] = date(RET_TIME_FORMAT, strtotime($d['time']));
+                $finished_note = new \stApp\model\Note($d);
+                $finished_notes [] = $finished_note;
+            }
+        }
+
+        $retdata = (object)[
+            'unfinished_num' => sizeof($unfinished_notes),
+            'unfinished' => $unfinished_notes,
+            'finished_num' => sizeof($finished_notes),
+            'finished' => $finished_notes
+        ];
+        $this->json->setRetdata($retdata);
+        return $this->json;
+
     }
 
 
@@ -149,8 +202,6 @@ class Note extends BaseService
 
         return ($is_top == $top_status) ? true : false;
     }
-
-
 
 
 }

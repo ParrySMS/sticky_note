@@ -11,7 +11,6 @@ namespace stApp\controller;
 
 use Exception;
 use stApp\common\LogicCheck;
-use stApp\common\PmCheck;
 use stApp\service\WxRequest;
 use stApp\service\CreateToken;
 
