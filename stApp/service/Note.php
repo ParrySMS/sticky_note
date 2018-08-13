@@ -171,9 +171,9 @@ class Note extends BaseService
      * @return Json
      * @throws Exception
      */
-    public function delete($uid,$nid)
+    public function delete($uid, $nid)
     {
-        $this->note->setVisible($uid,$nid);
+        $this->note->setVisible($uid, $nid);
 
         $retdata = (object)[
             'nid' => $nid
@@ -181,6 +181,28 @@ class Note extends BaseService
 
         $this->json->setRetdata($retdata);
         return $this->json;
+    }
+
+    /** 实现编辑
+     * @param $uid
+     * @param $nid
+     * @param $text
+     * @return Json
+     * @throws Exception
+     */
+    public function edit($uid, $nid, $text)
+    {
+        //检查是否有这个note
+        $this->hasNote($uid,$nid);
+        $this->note->updateText($uid,$nid,$text);
+
+        $retdata = (object)[
+            'nid' => $nid
+        ];
+
+        $this->json->setRetdata($retdata);
+        return $this->json;
+
     }
 
 
@@ -219,6 +241,27 @@ class Note extends BaseService
         }
 
         return ($is_top == $top_status) ? true : false;
+    }
+
+    /** 判断Note是否存在
+     * @param $uid
+     * @param $nid
+     * @return bool
+     * @throws Exception
+     */
+    protected function hasNote($uid, $nid)
+    {
+        $visible = $this->note->getVisible($uid, $nid);
+        //visible 可能有0
+        if (is_null($visible) || $visible === '') {
+            throw new Exception(MSG_NO_NOTE, 20040402);
+        }
+
+        if ($visible === NOTE_VISIBLE_DELETED) {
+            throw new Exception(MSG_HAS_DELETED, 20040403);
+        }
+
+        return true;
     }
 
 

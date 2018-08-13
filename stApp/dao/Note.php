@@ -202,7 +202,7 @@ class Note extends BaseDao
     }
 
 
-    /** 获取某状态下的note 已经按照置顶和对应时间排序
+    /** 获取某状态下的全部note 已经按照置顶和对应时间排序
      * @param $uid
      * @param $status
      * @return array|bool
@@ -259,5 +259,44 @@ class Note extends BaseDao
         if (!is_numeric($affected) || $affected != 1) {
             throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
         }
+    }
+
+
+    public function getVisible($uid,$nid){
+        $visible = $this->database->get($this->table,
+            'visible',
+            [
+                'AND'=>[
+                    'id'=>$nid,
+                    'uid'=>$uid,
+                ]
+
+        ]);
+
+        return $visible;
+    }
+
+    /** 编辑note文本信息
+     * @param $uid
+     * @param $nid
+     * @param $text
+     * @throws Exception
+     */
+    public function updateText($uid,$nid,$text)
+    {
+        $pdo = $this->database->update($this->table,[
+            'text'=>$text
+        ],[
+            'AND'=>[
+                'id'=>$nid,
+                'uid'=>$uid,
+                'visible[!]'=>NOTE_VISIBLE_DELETED
+            ]
+        ]);
+        $affected = $pdo->rowCount();
+        if (!is_numeric($affected) || $affected != 1) {
+            throw new Exception(__CLASS__ . '->' . __FUNCTION__ . '(): error', 500);
+        }
+
     }
 }

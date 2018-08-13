@@ -91,6 +91,26 @@ class EditNote extends BaseController
 
     }
 
+    /** 编辑内容 测试器
+     * @param $nid
+     * @param $text
+     */
+    public function edit($nid,$text)
+    {
+        try {
+            //参数检查
+            $nid = $this->check->id($nid);
+            $text = $this->check->note($text);
+
+            $json = $this->note->edit($this->uid,$nid,$text);
+            $this->echoJson($json);
+
+        } catch (Exception $e) {
+            $this->error($e);
+        }
+
+    }
+
 
     /** 实现不同类别具体状态调整
      * @param $uid

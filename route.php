@@ -76,7 +76,7 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
-    //todo 删除
+    //todo 删除 等待测试
     $this->post('/delete/{nid}', function ($request, $response, array $args) {
         $nid = isset($args['nid']) ? $args['nid'] : null;
         $c_note = new \stApp\controller\EditNote();
@@ -84,7 +84,7 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
-    //todo 编辑
+    //todo 编辑 等待测试
     $this->post('/edit/{nid}', function ($request, $response, array $args) {
         $text = isset($request->getParsedBody()['text']) ? $request->getParsedBody()["text"] : null;
         $nid = isset($args['nid']) ? $args['nid'] : null;
@@ -92,7 +92,6 @@ $app->group('/note',function () {
         $c_note->edit($nid,$text);
         return $response->withStatus($c_note->getStatus());
     });
-
 
     //获取首页的全部用户note
     $this->get('', function ($request, $response) {

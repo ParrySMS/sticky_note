@@ -65,19 +65,19 @@ class LogicCheck extends PmCheck
     }
 
     /** note数据检查
-     * @param $note
+     * @param $text
      * @return array|string
      * @throws Exception
      *
      */
-    public function note($note)
+    public function note($text)
     {
         //空检查 可能会有数字0 故不用empty
-        if(is_null($note)||$note === ''){
+        if(is_null($text)||$text === ''){
             throw new Exception('text null',400);
         }
         //长度检查
-        return $this->lenCheck($note);
+        return $this->lenCheck($text);
     }
 
     /** code空检查
