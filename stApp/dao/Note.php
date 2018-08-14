@@ -262,6 +262,11 @@ class Note extends BaseDao
     }
 
 
+    /** 获取一个Note的visible状态
+     * @param $uid
+     * @param $nid
+     * @return array|bool|mixed
+     */
     public function getVisible($uid,$nid){
         $visible = $this->database->get($this->table,
             'visible',
@@ -274,6 +279,27 @@ class Note extends BaseDao
         ]);
 
         return $visible;
+    }
+
+    /** 获取正常的note的text
+     * @param $uid
+     * @param $nid
+     * @return array|bool|mixed
+     */
+    public function getNoteText($uid, $nid)
+    {
+        $text = $this->database->get($this->table,
+            'text',
+            [
+                'AND' => [
+                    'id' => $nid,
+                    'uid' => $uid,
+                    'visible[!]' => NOTE_VISIBLE_DELETED
+                ]
+            ]);
+
+        return $text;
+
     }
 
     /** 编辑note文本信息

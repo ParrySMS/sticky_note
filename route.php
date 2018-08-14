@@ -76,7 +76,7 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
-    //todo 删除 等待测试
+    //删除
     $this->post('/delete/{nid}', function ($request, $response, array $args) {
         $nid = isset($args['nid']) ? $args['nid'] : null;
         $c_note = new \stApp\controller\EditNote();
@@ -84,8 +84,16 @@ $app->group('/note',function () {
         return $response->withStatus($c_note->getStatus());
     });
 
-    //todo 编辑 等待测试
-    $this->post('/edit/{nid}', function ($request, $response, array $args) {
+    // 使用delete方法简化的路由
+    $this->delete('/{nid}', function ($request, $response, array $args) {
+        $nid = isset($args['nid']) ? $args['nid'] : null;
+        $c_note = new \stApp\controller\EditNote();
+        $c_note->delete($nid);
+        return $response->withStatus($c_note->getStatus());
+    });
+
+    //编辑text
+    $this->post('/{nid}', function ($request, $response, array $args) {
         $text = isset($request->getParsedBody()['text']) ? $request->getParsedBody()["text"] : null;
         $nid = isset($args['nid']) ? $args['nid'] : null;
         $c_note = new \stApp\controller\EditNote();
@@ -99,6 +107,8 @@ $app->group('/note',function () {
         $c_note->init();
         return $response->withStatus($c_note->getStatus());
     });
+
+    //todo 获取jssdk 看最新文档
 
 
 });

@@ -192,9 +192,10 @@ class Note extends BaseService
      */
     public function edit($uid, $nid, $text)
     {
-        //检查是否有这个note
-        $this->hasNote($uid,$nid);
-        $this->note->updateText($uid,$nid,$text);
+        //检查是否有这个note 如果文字不一样才更新
+        if (!$this->hasNoteText($uid, $nid, $text)) {
+            $this->note->updateText($uid, $nid, $text);
+        }
 
         $retdata = (object)[
             'nid' => $nid
@@ -249,19 +250,26 @@ class Note extends BaseService
      * @return bool
      * @throws Exception
      */
-    protected function hasNote($uid, $nid)
+    protected function hasNoteText($uid, $nid, $text)
     {
-        $visible = $this->note->getVisible($uid, $nid);
-        //visible 可能有0
-        if (is_null($visible) || $visible === '') {
+        //已弃用 检查visible的方法
+//        $visible = $this->note->getVisible($uid, $nid);
+//        //visible 可能有0
+//        if (is_null($visible) || $visible === '') {
+//            throw new Exception(MSG_NO_NOTE, 20040402);
+//        }
+//
+//        if ($visible === NOTE_VISIBLE_DELETED) {
+//            throw new Exception(MSG_HAS_DELETED, 20040403);
+//        }
+//        return true;
+
+        //检查是否有正常状态的note 是否text相同
+        $note_text = $this->note->getNoteText($uid, $nid);
+        if (is_null($note_text) || $note_text === '') {
             throw new Exception(MSG_NO_NOTE, 20040402);
         }
-
-        if ($visible === NOTE_VISIBLE_DELETED) {
-            throw new Exception(MSG_HAS_DELETED, 20040403);
-        }
-
-        return true;
+        return ($note_text == $text) ? true : false;
     }
 
 
