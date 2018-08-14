@@ -19,6 +19,8 @@ class WxRequest
     private $app_secret;
     public $http;
     const  WXSNS_URL = 'https://api.weixin.qq.com/sns/';
+    const JSSDK_PATH = './jssdk/';
+    const JSAPI_TICKET_FILE = 'jsapi_ticket.php';
 
 
     /**
@@ -37,7 +39,7 @@ class WxRequest
      * @param string $appsecret
      * @return null
      */
-    public function getAccessToken($code)
+    public function getAccessTokenOAuth2($code)
     {
 
         //appid 和 appsecret在配置文件中
@@ -52,12 +54,16 @@ class WxRequest
 
         $access_token_json = $this->http->get($access_token_url,$data);
         $access_token_object = json_decode($access_token_json);
+        if (!is_object($access_token_object)) {
+            throw new Exception(__CLASS__.__FUNCTION__ . '() error: json_decode', 500);
+        }
         //var_dump($access_token_array);
         if (isset($access_token_object->errmsg)) {
             $errmsg = $access_token_object->errmsg;
             $errcode = $access_token_object->errmsg;
             throw new Exception("wxsns unauthorized: $errcode -> $errmsg", 501);
         }
+
         return empty($access_token_object) ? null : $access_token_object;
             /**
              * 正常返回
@@ -74,7 +80,7 @@ class WxRequest
      * @return mixed|null
      * @throws Exception
      */
-    public function refresh_token($access_token){
+    public function refreshToken($access_token){
         $refresh_url = $this::WXSNS_URL .'oauth2/refresh_token';
         $data = [
             'appid' => $this->app_id,
@@ -83,6 +89,11 @@ class WxRequest
         ];
         $refresh_json = $this->http->get($refresh_url,$data);
         $refresh_object = json_decode($refresh_json);
+
+        if (!is_object($refresh_object)) {
+            throw new Exception(__CLASS__.__FUNCTION__ . '() error: json_decode', 500);
+        }
+
         if (isset($refresh_object->errmsg)) {
             $errmsg = $refresh_object->errmsg;
             $errcode = $refresh_object->errcode;
@@ -116,6 +127,11 @@ class WxRequest
         ];
         $userinfo_json = $this->http->get($userinfo_url,$data);
         $userinfo_object = json_decode($userinfo_json);
+
+        if (!is_object($userinfo_object)) {
+            throw new Exception(__CLASS__.__FUNCTION__ . '() error: json_decode', 500);
+        }
+
         if (isset($userinfo_object->errmsg)) {
             $errmsg = $userinfo_object->errmsg;
             $errcode = $userinfo_object->errcode;
@@ -133,5 +149,63 @@ class WxRequest
         privilege	用户特权信息，json 数组，如微信沃卡用户为（chinaunicom）
         unionid	只有在用户将公众号绑定到微信开放平台帐号后，才会出现该字段。
          */
+    }
+
+    public function getAccessTokenGlobal(){
+
+    }
+
+    public function getSignPackage($url)
+    {
+
+    }
+
+    private function getJsApiTicket()
+    {
+        unset($ticket);
+        // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
+        $data = json_decode($this->getPhpFile($this::JSSDK_PATH.$this::JSAPI_TICKET_FILE));
+        if ($data->expire_time < time()) {
+            $result = $this->getAccessTokenGlobal();
+            if (is_object($result)) {
+                return $result;
+            } else {
+                $accessToken = $result;
+                // 如果是企业号用以下 URL 获取 ticket
+                // $url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=$accessToken";
+                $url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token=$accessToken";
+                $res = json_decode($this->httpGet($url));
+                //var_dump($res);
+                $ticket = $res->ticket;
+                if ($ticket) {
+                    $data->expire_time = time() + 7000;
+                    $data->jsapi_ticket = $ticket;
+                    $this->setPhpFile("../jssdk/jsapi_ticket.php", json_encode($data));
+                }
+            }
+        } else {
+            $ticket = $data->jsapi_ticket;
+        }
+        return $ticket;
+    }
+
+    /** 读取文件
+     * @param $filename
+     * @return string
+     */
+    private function getPhpFile($filename)
+    {
+        return trim(substr(file_get_contents($filename), 15));
+    }
+
+    /** 写入文件
+     * @param $filename
+     * @param $content
+     */
+    private function setPhpFile($filename, $content)
+    {
+        $fp = fopen($filename, "w");
+        fwrite($fp, "<?php exit();?>" . $content);
+        fclose($fp);
     }
 }

@@ -42,7 +42,7 @@ class Http
         $error = curl_error($ch);
         curl_close($ch);
         if ($result === false) {
-            throw new Exception('Curl error: ' . $error, 501);
+            throw new Exception(__CLASS__ . __FUNCTION__. 'Curl error: ' . $error, 501);
 //            echo 'Curl error: ' . $error;
 //            return null;
         } else {
@@ -80,7 +80,8 @@ class Http
         $error = curl_error($ch);
         curl_close($ch);
         if ($result === false) {
-            throw new Exception('Curl error: ' . $error, 501);
+            throw new Exception(__CLASS__ . __FUNCTION__. 'Curl error: ' . $error, 501);
+
 //            return null;
         } else {
             return $result;

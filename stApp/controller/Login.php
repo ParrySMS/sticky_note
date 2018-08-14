@@ -51,7 +51,7 @@ class Login extends BaseController
     {
         //获取openid 获取用户信息
         $wx = new WxRequest();
-        $acc = $wx->getAccessToken($code);
+        $acc = $wx->getAccessTokenOAuth2($code);
 
         $scCT = new CreateToken();
         //默认假设老用户，直接获取token
