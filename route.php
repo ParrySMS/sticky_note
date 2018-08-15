@@ -7,9 +7,12 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use Medoo\Medoo;
 
 //跨域设置 上线后应关闭
+// 指定允许其他域名访问
+header('Access-Control-Allow-Origin:*');
 header("Access-Control-Allow-Credentials:true");
 header("Access-Control-Allow-Methods:POST,GET,DELETE");
 header("Content-type: text/html; charset=utf-8");
+// 响应头设置
 date_default_timezone_set("Asia/Shanghai");
 
 //todo:debug模式 记得上线前关掉

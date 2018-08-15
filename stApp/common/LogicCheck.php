@@ -73,8 +73,8 @@ class LogicCheck extends PmCheck
     public function note($text)
     {
         //空检查 可能会有数字0 故不用empty
-        if(is_null($text)||$text === ''){
-            throw new Exception('text null',400);
+        if (is_null($text) || $text === '') {
+            throw new Exception('text null', 400);
         }
         //长度检查
         return $this->lenCheck($text);
@@ -86,8 +86,8 @@ class LogicCheck extends PmCheck
      */
     public function code($code)
     {
-        if(empty($code)){
-            throw new Exception('code null',400);
+        if (empty($code)) {
+            throw new Exception('code null', 400);
         }
     }
 
@@ -97,10 +97,11 @@ class LogicCheck extends PmCheck
      * @return int|null|string
      * @throws Exception
      */
-    public function id($id, $intval = true){
-        $id = $this->getNumeric($id,$intval);
-        if($id === null){
-            throw new Exception('id null',400);
+    public function id($id, $intval = true)
+    {
+        $id = $this->getNumeric($id, $intval);
+        if ($id === null) {
+            throw new Exception('id null', 400);
         }
         return $id;
     }
@@ -110,14 +111,16 @@ class LogicCheck extends PmCheck
      * @param $url
      * @throws Exception
      */
-    public function url($url){
+    public function url($url)
+    {
 
-        if(empty($code)){
-            throw new Exception('url null',400);
+        if (empty($url)) {
+            throw new Exception('url null', 400);
         }
 
-        if(!filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)){
-            throw new Exception('url type error',400);
+        $pattern = "/\b(?:(?:https?|http):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i";
+        if (!preg_match($pattern, $url)) {
+            throw new Exception("url type error: $url", 400);
         }
     }
 

@@ -23,9 +23,9 @@ class WxRequest extends BaseService
     const WX_GLOBAL_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token';
     const WX_API_TICKET_URL = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
     const WXSNS_URL = 'https://api.weixin.qq.com/sns/';
-    const JSSDK_PATH = './jssdk/';
-    const JSAPI_TICKET_FILE = 'jsapi_ticket.php';
-    const ACCESS_TOKEN_FILE = 'access_token.php';
+    const JSSDK_PATH =  '/jssdk';
+    const JSAPI_TICKET_FILE = '/jsapi_ticket.php';
+    const ACCESS_TOKEN_FILE = '/access_token.php';
 
 
     /**
@@ -165,7 +165,7 @@ class WxRequest extends BaseService
     public function getAccessTokenGlobal()
     {
         // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
-        $file_data = json_decode($this->getPhpFile($this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE));
+        $file_data = json_decode($this->getPhpFile(__DIR__.$this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE));
 
         if ($file_data->expire_time < time()) {//如果过期了 重新取
             $url = $this::WX_GLOBAL_ACCESS_TOKEN_URL;
@@ -194,7 +194,7 @@ class WxRequest extends BaseService
             $file_data->expire_time = time() + $this::WX_EXPIRE;
             $file_data->access_token = $acc_object->access_token;
             //更新写入文件
-            $this->setPhpFile($this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE, json_encode($file_data));
+            $this->setPhpFile(__DIR__.$this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE, json_encode($file_data));
         }
 
         //没过期 直接读文件数据即可
@@ -248,7 +248,7 @@ class WxRequest extends BaseService
     private function getJsApiTicket()
     {
         // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
-        $file_data = json_decode($this->getPhpFile($this::JSSDK_PATH . $this::JSAPI_TICKET_FILE));
+        $file_data = json_decode($this->getPhpFile(__DIR__.$this::JSSDK_PATH . $this::JSAPI_TICKET_FILE));
 
         if ($file_data->expire_time < time()) {//如果过期了 重新取全局
 
@@ -284,7 +284,7 @@ class WxRequest extends BaseService
             //取出来之后直接存起来
             $file_data->expire_time = time() + $this::WX_EXPIRE;
             $file_data->jsapi_ticket = $ticket_obj->ticket;
-            $this->setPhpFile($this::JSSDK_PATH . $this::JSAPI_TICKET_FILE, json_encode($file_data));
+            $this->setPhpFile(__DIR__.$this::JSSDK_PATH . $this::JSAPI_TICKET_FILE, json_encode($file_data));
 
         }//如果没过期 直接取出
 

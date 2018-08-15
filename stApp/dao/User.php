@@ -103,6 +103,9 @@ class User extends BaseDao
      */
     public function insertUser($info)
     {
+        //unionid 可能空
+        $info->unionid = isset( $info->unionid)? $info->unionid:null;
+
         $pdo = $this->database->insert($this->table, [
             'openid' => $info->openid,
             'nickname' => $info->nickname,
