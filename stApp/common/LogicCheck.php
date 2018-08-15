@@ -106,5 +106,20 @@ class LogicCheck extends PmCheck
     }
 
 
+    /** 检查url
+     * @param $url
+     * @throws Exception
+     */
+    public function url($url){
+
+        if(empty($code)){
+            throw new Exception('url null',400);
+        }
+
+        if(!filter_var($url, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)){
+            throw new Exception('url type error',400);
+        }
+    }
+
 
 }

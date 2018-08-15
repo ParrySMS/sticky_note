@@ -27,18 +27,32 @@ $pm_check = new \stApp\common\PmCheck();
 
 //login登录 创建token
 
-/**
- * @ResponseBody  $response
- */
+//登录
 $app->post('/login', function (Request $request, Response $response) {
-    $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
+    $code = isset($request->getParsedBody()['code']) ? $request->getParsedBody()['code'] : null;
     $c_login = new \stApp\controller\Login($code);
     setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);
     return $response->withStatus($c_login->getStatus());
 });
 
-//处理笔记内容
+//获取jssdk配置信息
+$app->post('/jssdk',function (Request $request, Response $response) {
+    $url = isset($request->getParsedBody()['url']) ? $request->getParsedBody()['url'] : null;
+    $c_jssdk = new \stApp\controller\JSSDK($url);
+    return $response->withStatus($c_jssdk->getStatus());
+});
+
+/** 处理笔记内容路由组
+ *  获取全部 插入 勾选 置顶 删除 编辑
+ */
 $app->group('/note',function () {
+
+    //获取首页的全部用户note
+    $this->get('', function ($request, $response) {
+        $c_note = new \stApp\controller\GetNote();
+        $c_note->init();
+        return $response->withStatus($c_note->getStatus());
+    });
 
     //插入新数据
     $this->post('', function ($request, $response) {
@@ -104,18 +118,9 @@ $app->group('/note',function () {
         $c_note->edit($nid,$text);
         return $response->withStatus($c_note->getStatus());
     });
-
-    //获取首页的全部用户note
-    $this->get('', function ($request, $response) {
-        $c_note = new \stApp\controller\GetNote();
-        $c_note->init();
-        return $response->withStatus($c_note->getStatus());
-    });
-
-    //todo 获取jssdk 看最新文档
-
-
 });
+
+
 
 $app->run();
 

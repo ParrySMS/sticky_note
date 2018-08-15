@@ -11,8 +11,9 @@ namespace stApp\service;
 
 use \Exception;
 use stApp\common\Http;
+use stApp\model\Json;
 
-class WxRequest
+class WxRequest extends BaseService
 {
 
     private $app_id;
@@ -308,5 +309,20 @@ class WxRequest
         $fp = fopen($filename, "w");
         fwrite($fp, "<?php exit();?>" . $content);
         fclose($fp);
+    }
+
+    /** 直接返回json包
+     * @param $url
+     * @return Json
+     * @throws Exception
+     */
+    public function sign($url)
+    {
+        $this->json = new Json();
+        $signPackage = $this->getSignPackage($url);
+        $retdata = (object)['signPackage'=>$signPackage];
+        $this->json->setRetdata($retdata);
+        return $this->json;
+
     }
 }
