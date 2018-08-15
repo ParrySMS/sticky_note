@@ -2,13 +2,13 @@
 
 require './vendor/autoload.php';
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use \Psr\Http\Message\ServerRequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 use Medoo\Medoo;
 
 //跨域设置 上线后应关闭
 header("Access-Control-Allow-Credentials:true");
-header("Access-Control-Allow-Methods:POST,GET");
+header("Access-Control-Allow-Methods:POST,GET,DELETE");
 header("Content-type: text/html; charset=utf-8");
 date_default_timezone_set("Asia/Shanghai");
 
@@ -26,7 +26,11 @@ $pm_check = new \stApp\common\PmCheck();
 //路由区域
 
 //login登录 创建token
-$app->post('/login', function ($request, $response) {
+
+/**
+ * @ResponseBody  $response
+ */
+$app->post('/login', function (Request $request, Response $response) {
     $code = isset($request->getParsedBody()["code"]) ? $request->getParsedBody()["code"] : null;
     $c_login = new \stApp\controller\Login($code);
     setcookie(TOKEN_NAME, $c_login->getToken(), EXPIRES, PATH);

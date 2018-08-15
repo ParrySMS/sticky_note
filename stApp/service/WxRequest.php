@@ -19,7 +19,9 @@ class WxRequest
     private $app_secret;
     public $http;
     const WX_EXPIRE = 7000;
-    const  WXSNS_URL = 'https://api.weixin.qq.com/sns/';
+    const WX_GLOBAL_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token';
+    const WX_API_TICKET_URL = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
+    const WXSNS_URL = 'https://api.weixin.qq.com/sns/';
     const JSSDK_PATH = './jssdk/';
     const JSAPI_TICKET_FILE = 'jsapi_ticket.php';
     const ACCESS_TOKEN_FILE = 'access_token.php';
@@ -155,13 +157,17 @@ class WxRequest
          */
     }
 
+    /** 获取全局access_token
+     * @return mixed
+     * @throws Exception
+     */
     public function getAccessTokenGlobal()
     {
         // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
-        $file_data = json_decode($this->getPhpFile($this::JSSDK_PATH.$this::ACCESS_TOKEN_FILE));
+        $file_data = json_decode($this->getPhpFile($this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE));
 
-        if ($file_data->expire_time < time()) {//如果过期了
-            $url = 'https://api.weixin.qq.com/cgi-bin/token';
+        if ($file_data->expire_time < time()) {//如果过期了 重新取
+            $url = $this::WX_GLOBAL_ACCESS_TOKEN_URL;
             $data = [
                 'grant_type' => 'client_credential',
                 'appid' => $this->app_id,
@@ -169,6 +175,10 @@ class WxRequest
             ];
             //获取数据包对象
             $acc_object = json_decode($this->http->get($url, $data));
+            /**
+             * 请求成功之后返回
+             * {"access_token":"ACCESS_TOKEN","expires_in":7200}
+             */
 
             if (!is_object($acc_object)) {
                 throw new Exception(__CLASS__ . __FUNCTION__ . '() error: json_decode', 500);
@@ -179,11 +189,11 @@ class WxRequest
                 $errcode = $acc_object->errcode;
                 throw new Exception("wxsns unauthorized: $errcode -> $errmsg", 501);
             }
-            //更新写入文件
+
             $file_data->expire_time = time() + $this::WX_EXPIRE;
             $file_data->access_token = $acc_object->access_token;
-            $this->setPhpFile($this::JSSDK_PATH.$this::ACCESS_TOKEN_FILE, json_encode($file_data));
-
+            //更新写入文件
+            $this->setPhpFile($this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE, json_encode($file_data));
         }
 
         //没过期 直接读文件数据即可
@@ -191,50 +201,93 @@ class WxRequest
 
     }
 
+    /** 返回签名信息包
+     * @param $url
+     * @return array
+     * @throws Exception
+     */
     public function getSignPackage($url)
     {
+        $jsapiTicket = $this->getJsApiTicket();
+        $timestamp = time();
+        $nonceStr = $this->createNonceStr();
+        // 这里参数的顺序要按照 key 值 ASCII 码升序排序
+        $string = "jsapi_ticket=$jsapiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
+        $signature = sha1($string);
+        $signPackage = [
+            "appId" => $this->app_id,
+            "nonceStr" => $nonceStr,
+            "timestamp" => $timestamp,
+            "url" => $url,
+            "signature" => $signature
+//            "rawString" => $string
+        ];
+        return $signPackage;
 
     }
 
+    /** 创建随机字符串
+     * @param int $length
+     * @return string
+     */
+    private function createNonceStr($length = 16)
+    {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $str = '';
+        for ($i = 0; $i < $length; $i++) {
+            $str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+        }
+        return $str;
+    }
+
+    /** 获取jsapi ticket
+     * @return mixed
+     * @throws Exception
+     */
     private function getJsApiTicket()
     {
         // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
         $file_data = json_decode($this->getPhpFile($this::JSSDK_PATH . $this::JSAPI_TICKET_FILE));
 
-        //如果过期了
-        if ($file_data->expire_time < time()) {
-            //因为同时更新的 所以应该是两个都过期
-            $accessToken = $this->getAccessTokenGlobal();
+        if ($file_data->expire_time < time()) {//如果过期了 重新取全局
+
+            $access_token = $this->getAccessTokenGlobal();
+            //todo 实现具体
             // 如果是企业号用以下 URL 获取 ticket
             // $url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=$accessToken";
-            $url = 'https://api.weixin.qq.com/cgi-bin/ticket/getticket';
+            $url = $this::WX_API_TICKET_URL;
             $data = [
-                'type'=>'jsapi',
-                'access_token'=>$accessToken
+                'type' => 'jsapi',
+                'access_token' => $access_token
             ];
-            $ticket_obj = json_decode($this->http->get($url,$data));
+            $ticket_obj = json_decode($this->http->get($url, $data));
 
             /**成功返回如下JSON：
              * {
-            "errcode":0,
-            "errmsg":"ok",
-            "ticket":"bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
-            "expires_in":7200
-            }
+             * "errcode":0,
+             * "errmsg":"ok",
+             * "ticket":"bxLdikRXVbTPdHSM05e5u5sUoXNKd8-41ZO3MhKoyN5OfkWITDGgnr2fwJ0m9E8NYzWKVZvdVtaUgWvsdshFKA",
+             * "expires_in":7200
+             * }
              */
-
-            //var_dump($res);
-            $ticket = $res->ticket;
-            if ($ticket) {
-                $file_data->expire_time = time() + 7000;
-                $file_data->jsapi_ticket = $ticket;
-                $this->setPhpFile("../jssdk/jsapi_ticket.php", json_encode($file_data));
+            if (!is_object($ticket_obj)) {
+                throw new Exception(__CLASS__ . __FUNCTION__ . '() error: json_decode', 500);
             }
 
-        } else {
-            $ticket = $file_data->jsapi_ticket;
-        }
-        return $ticket;
+            if (isset($ticket_obj->errmsg) && $ticket_obj->errmsg != 0) {
+                $errmsg = $ticket_obj->errmsg;
+                $errcode = $ticket_obj->errcode;
+                throw new Exception("wxsns unauthorized: $errcode -> $errmsg", 501);
+            }
+
+            //取出来之后直接存起来
+            $file_data->expire_time = time() + $this::WX_EXPIRE;
+            $file_data->jsapi_ticket = $ticket_obj->ticket;
+            $this->setPhpFile($this::JSSDK_PATH . $this::JSAPI_TICKET_FILE, json_encode($file_data));
+
+        }//如果没过期 直接取出
+
+        return $file_data->jsapi_ticket;
     }
 
     /** 读取文件
