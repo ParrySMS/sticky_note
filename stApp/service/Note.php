@@ -96,7 +96,7 @@ class Note extends BaseService
     }
 
 
-    /**
+    /** 置顶或取消置顶操作
      * @param $uid
      * @param $nid
      * @param $top_status
