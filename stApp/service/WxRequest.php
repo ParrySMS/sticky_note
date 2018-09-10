@@ -18,6 +18,7 @@ class WxRequest extends BaseService
 
     private $app_id;
     private $app_secret;
+    private $jsapi_ticket;
     public $http;
     const WX_EXPIRE = 7000;
     const WX_GLOBAL_ACCESS_TOKEN_URL = 'https://api.weixin.qq.com/cgi-bin/token';
@@ -195,6 +196,9 @@ class WxRequest extends BaseService
             $file_data->access_token = $acc_object->access_token;
             //更新写入文件
             $this->setPhpFile(__DIR__.$this::JSSDK_PATH . $this::ACCESS_TOKEN_FILE, json_encode($file_data));
+
+            //防止写入未完成提前返回
+            return $acc_object->access_token;
         }
 
         //没过期 直接读文件数据即可
@@ -219,9 +223,9 @@ class WxRequest extends BaseService
             "appId" => $this->app_id,
             "nonceStr" => $nonceStr,
             "timestamp" => $timestamp,
+            "jsapi_ticket"=>$this->jsapi_ticket,
             "url" => $url,
             "signature" => $signature
-//            "rawString" => $string
         ];
         return $signPackage;
 
@@ -253,7 +257,6 @@ class WxRequest extends BaseService
         if ($file_data->expire_time < time()) {//如果过期了 重新取全局
 
             $access_token = $this->getAccessTokenGlobal();
-            //todo 实现具体
             // 如果是企业号用以下 URL 获取 ticket
             // $url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=$accessToken";
             $url = $this::WX_API_TICKET_URL;
@@ -286,7 +289,16 @@ class WxRequest extends BaseService
             $file_data->jsapi_ticket = $ticket_obj->ticket;
             $this->setPhpFile(__DIR__.$this::JSSDK_PATH . $this::JSAPI_TICKET_FILE, json_encode($file_data));
 
+            //临时用于调试的ticket输出
+            $this->jsapi_ticket =$ticket_obj->ticket;
+
+            //防止未完成写入而读取了旧数据
+            return $ticket_obj->ticket;
+
         }//如果没过期 直接取出
+
+        //临时用于调试的ticket输出
+        $this->jsapi_ticket =$file_data->jsapi_ticket;
 
         return $file_data->jsapi_ticket;
     }

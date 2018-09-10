@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin:*');
 header("Access-Control-Allow-Credentials:true");
 header("Access-Control-Allow-Methods:POST,GET,DELETE");
 header("Content-type: text/html; charset=utf-8");
-// 响应头设置
+// 响应头设置s
 date_default_timezone_set("Asia/Shanghai");
 
 //todo:debug模式 记得上线前关掉
