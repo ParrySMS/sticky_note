@@ -1,15 +1,6 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : lizhiNew
-Source Server Version : 50628
-Source Host           : 55c5f3742f54d.gz.cdb.myqcloud.com:13125
-Source Database       : yihui
-
-Target Server Type    : MYSQL
-Target Server Version : 50628
-File Encoding         : 65001
-
 Date: 2018-09-14 10:56:46
 */
 
